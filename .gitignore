@@ -1,0 +1,18 @@
+# Ambienti virtuali
+venv/
+env/
+.env
+
+# Cache di Python e PyCharm
+__pycache__/
+*.pyc
+.idea/
+
+# Dataset e Modelli (Modifica i percorsi in base alla tua struttura)
+*.pt
+*.bin
+*.safetensors
+dataset/
+data/
+models/
+*.csv

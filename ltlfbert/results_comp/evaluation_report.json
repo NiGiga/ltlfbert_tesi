@@ -1,0 +1,26 @@
+{
+  "baseline": {
+    "retrieval_test": {
+      "MRR": 0.007150157346715339,
+      "Recall@1": 0.0,
+      "Recall@10": 0.008
+    },
+    "retrieval_ood": {
+      "MRR": 0.007496888271951409,
+      "Recall@1": 0.002,
+      "Recall@10": 0.008
+    }
+  },
+  "ltlfbert": {
+    "retrieval_test": {
+      "MRR": 0.01111384185248028,
+      "Recall@1": 0.002,
+      "Recall@10": 0.024
+    },
+    "retrieval_ood": {
+      "MRR": 0.007065140151530507,
+      "Recall@1": 0.0,
+      "Recall@10": 0.01
+    }
+  }
+}
