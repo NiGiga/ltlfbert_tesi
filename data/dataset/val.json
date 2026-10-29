@@ -1,0 +1,58 @@
+[
+  {
+    "formula": "(p1 U p3) U (p3 R p0)",
+    "trace": "1011 0000 0101 1111 1101 1110 1110",
+    "label": 1,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "!p0 | (p3 W 0)",
+    "trace": "0011 1000 1101 1000 0011 0111 0100",
+    "label": 1,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "!p0 | (p3 W 0)",
+    "trace": "1111 1100 0001 1001 1101 1101 0100",
+    "label": 0,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "!p0 | (p3 W 0)",
+    "trace": "1011 1001 1101 1001 1011 0110 0010",
+    "label": 0,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "(p1 U p3) U (p3 R p0)",
+    "trace": "0100 0110 1100 0001 1000 1010 0111 1010",
+    "label": 0,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "(p1 U p3) U (p3 R p0)",
+    "trace": "1100 1101 0100 1111",
+    "label": 1,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "(p1 U p3) U (p3 R p0)",
+    "trace": "0101 0000 1111 0001",
+    "label": 0,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "!p0 | (p3 W 0)",
+    "trace": "0100 1111 1101 0000 1011 1101",
+    "label": 1,
+    "sat_label": 1,
+    "depth": 2
+  }
+]

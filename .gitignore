@@ -12,6 +12,5 @@ __pycache__/
 *.pt
 *.bin
 *.safetensors
-dataset/
-models/
+dataset/S
 *.csv

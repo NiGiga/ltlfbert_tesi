@@ -1,0 +1,86 @@
+[
+  {
+    "formula": "!((1 U Xp1) & (X(0) M p3))",
+    "trace": "1001 0111 0101",
+    "label": 0,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "!p0 M (p0 xor p2)",
+    "trace": "0010 1011 1110 1101 1110",
+    "label": 1,
+    "sat_label": 1,
+    "depth": 1
+  },
+  {
+    "formula": "F(F!p0 xor G!p0)",
+    "trace": "1111 1111 1011",
+    "label": 0,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "F(F!p0 xor G!p0)",
+    "trace": "0010 0001 1101 1011",
+    "label": 1,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "!((1 U Xp1) & (X(0) M p3))",
+    "trace": "0101 1011 0110 0001 0000 1100",
+    "label": 1,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "F(F!p0 xor G!p0)",
+    "trace": "0111 0111 0110",
+    "label": 0,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "!((1 U Xp1) & (X(0) M p3))",
+    "trace": "0111 0011 0111",
+    "label": 0,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "!((1 U Xp1) & (X(0) M p3))",
+    "trace": "1010 1101 1010 1010 0101 1001",
+    "label": 1,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "F(F!p0 xor G!p0)",
+    "trace": "0001 1001 0010 0100 0010",
+    "label": 1,
+    "sat_label": 1,
+    "depth": 2
+  },
+  {
+    "formula": "!p0 M (p0 xor p2)",
+    "trace": "0011 0000 0011 1001 0111",
+    "label": 1,
+    "sat_label": 1,
+    "depth": 1
+  },
+  {
+    "formula": "!p0 M (p0 xor p2)",
+    "trace": "1010 0000 0100",
+    "label": 0,
+    "sat_label": 1,
+    "depth": 1
+  },
+  {
+    "formula": "!p0 M (p0 xor p2)",
+    "trace": "0001 1110 0111 1100",
+    "label": 0,
+    "sat_label": 1,
+    "depth": 1
+  }
+]
