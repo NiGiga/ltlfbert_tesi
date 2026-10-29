@@ -10,6 +10,9 @@ Pipeline:
 4. Separa le formule più complesse come OOD
 5. Campiona tracce positive/negative usando l'automa come oracolo
 6. Salva train/val/test/ood in JSON
+
+NOTA: usiamo buchi come automa, small per ottimizzarlo al massimo e forziamo spot a porre le condizioni di accettazione
+sugli stati e non sulle transizioni (State-Base Acceptance)
 """
 
 import json
@@ -31,11 +34,13 @@ PROPS = ["p0", "p1", "p2", "p3"]
 
 def is_satisfiable(formula: str) -> bool:
     """Controlla se una formula LTLf è soddisfacibile usando Spot."""
+    f = spot.from_ltlf(formula)
+    aut = f.translate('small', 'buchi', 'sbacc')
     try:
-        f = spot.from_ltlf(formula)
-        return not spot.is_empty(f.translate('small', 'buchi', 'sbacc'))
-    except Exception:
-        return False
+        # metodo dell'automaton
+        return not aut.is_empty()
+    except AttributeError:
+        return aut.accepting_run() is not None
 
 
 def random_trace(min_len=3, max_len=8, props=PROPS):
@@ -51,24 +56,22 @@ def trace_to_str(trace, props=PROPS):
     return " ".join("".join("1" if p in s else "0" for p in props) for s in trace)
 
 
-def randltl_generate(n=100, tree_size=8, seed=42, props=PROPS) -> List[str]:
-    cmd = [
-        "randltl",
-        "-n", str(n),
-        "--tree-size", str(tree_size),
-        "--seed", str(seed),
-        "-p", str(len(props)),
-    ]
-    out = subprocess.check_output(cmd, text=True)
-    formulas = [line.strip() for line in out.splitlines() if line.strip()]
-    return formulas
+def randltl_generate(n=100, tree_size=8, seed=67, ap=PROPS):
+    f = spot.randltl(
+        n          = n,
+        tree_size  = tree_size,
+        seed       = seed,
+        ap         = len(ap),
+        allow_dup  = False
+    )
+    fs = [str(i) for i in f]
+    return fs
 
 
-def build_finite_automaton(formula: str):
-    f = spot.from_ltlf(formula)
-    aut = f.translate('small', 'buchi', 'sbacc')
-    finite = spot.to_finite(aut)
-    return finite
+
+def build_finite_automaton(formula_str):
+    f = spot.formula(formula_str)
+    return f.translate("finite", "deterministic", "sbacc")
 
 
 def _trace_to_word(trace, props=PROPS) -> List[set]:
