@@ -70,3 +70,4 @@ typer==0.25.1
 typing_extensions==4.15.0
 
 spot
+deap

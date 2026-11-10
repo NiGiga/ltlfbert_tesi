@@ -1,0 +1,5229 @@
+{
+  "config": {
+    "n_formulas_requested": 5000,
+    "traces_per_formula": 1,
+    "complexity_buckets": [
+      6,
+      10,
+      14
+    ],
+    "seed": 42,
+    "train_frac": 0.8,
+    "val_frac": 0.1,
+    "test_frac": 0.1,
+    "min_len": 3,
+    "max_len": 8,
+    "max_attempts": 500,
+    "propositions": [
+      "p0",
+      "p1",
+      "p2",
+      "p3"
+    ],
+    "oracle": "from_ltlf + Buchi intersection with alive word",
+    "depth_field": "generation bucket index",
+    "ood_policy": "first encountered in final generation bucket",
+    "label_policy": "approximately balanced targets per candidate split; no target changes after sampling failure",
+    "formula_acceptance_policy": "require one positive and one negative sampled witness; save only the witness matching the assigned target label",
+    "global_textual_formula_uniqueness": true,
+    "global_trace_uniqueness": false,
+    "semantic_formula_deduplication": false
+  },
+  "bucket_stats": [
+    {
+      "bucket": 1,
+      "tree_size": 6,
+      "requested": 1667,
+      "returned": 1667,
+      "new_unique": 1667,
+      "discarded_duplicate_occurrences": 0
+    },
+    {
+      "bucket": 2,
+      "tree_size": 10,
+      "requested": 1667,
+      "returned": 1667,
+      "new_unique": 1548,
+      "discarded_duplicate_occurrences": 119
+    },
+    {
+      "bucket": 3,
+      "tree_size": 14,
+      "requested": 1666,
+      "returned": 1666,
+      "new_unique": 1562,
+      "discarded_duplicate_occurrences": 104
+    }
+  ],
+  "unique_candidate_formulas": 4777,
+  "kept_formulas": 4268,
+  "total_examples": 4268,
+  "positive_examples": 2138,
+  "negative_examples": 2130,
+  "positive_fraction": 0.5009372071227741,
+  "sampling_attempts": 312566,
+  "oracle_checks": 312065,
+  "splits": {
+    "train": {
+      "candidate_formulas": 2573,
+      "candidate_positive_targets": 1287,
+      "candidate_negative_targets": 1286,
+      "kept_formulas": 2311,
+      "examples": 2311,
+      "positive_examples": 1149,
+      "negative_examples": 1162,
+      "positive_fraction": 0.49718736477715275,
+      "skipped_formulas": 262,
+      "skipped_positive_targets": 138,
+      "skipped_negative_targets": 124,
+      "failure_reasons": {
+        "negative_witness_not_found": 169,
+        "positive_witness_not_found": 93
+      }
+    },
+    "val": {
+      "candidate_formulas": 321,
+      "candidate_positive_targets": 160,
+      "candidate_negative_targets": 161,
+      "kept_formulas": 289,
+      "examples": 289,
+      "positive_examples": 146,
+      "negative_examples": 143,
+      "positive_fraction": 0.5051903114186851,
+      "skipped_formulas": 32,
+      "skipped_positive_targets": 14,
+      "skipped_negative_targets": 18,
+      "failure_reasons": {
+        "negative_witness_not_found": 24,
+        "positive_witness_not_found": 8
+      }
+    },
+    "test": {
+      "candidate_formulas": 321,
+      "candidate_positive_targets": 161,
+      "candidate_negative_targets": 160,
+      "kept_formulas": 289,
+      "examples": 289,
+      "positive_examples": 145,
+      "negative_examples": 144,
+      "positive_fraction": 0.5017301038062284,
+      "skipped_formulas": 32,
+      "skipped_positive_targets": 16,
+      "skipped_negative_targets": 16,
+      "failure_reasons": {
+        "positive_witness_not_found": 12,
+        "negative_witness_not_found": 20
+      }
+    },
+    "ood": {
+      "candidate_formulas": 1562,
+      "candidate_positive_targets": 781,
+      "candidate_negative_targets": 781,
+      "kept_formulas": 1379,
+      "examples": 1379,
+      "positive_examples": 698,
+      "negative_examples": 681,
+      "positive_fraction": 0.5061638868745467,
+      "skipped_formulas": 183,
+      "skipped_positive_targets": 83,
+      "skipped_negative_targets": 100,
+      "failure_reasons": {
+        "negative_witness_not_found": 125,
+        "positive_witness_not_found": 58
+      }
+    }
+  },
+  "skipped_formulas": [
+    {
+      "formula": "F(!Fp3 W p3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(1 U Xp1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GXp1 M 1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(X!X(0) W 0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "(p0 | X(0)) M 1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) & F(G!p0 | Fp1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FXp1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(p2 | (p1 <-> p3))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(Xp1 | !F!p3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FXp1 | !(XFp1 U p2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!X(0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(Gp2 -> Xp2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(p2 <-> Xp1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Fp3 & !F(p2 | (p1 U p3))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "XFXXXp2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p0 | (X(0) -> p2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Xp0 M 1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!X(0) M 1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!Xp3 W 0",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p1 U ((p3 & !p3) M p1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(p2 & !p2)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(p0 | F(Xp2 W 0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!(p1 & Gp0) R (p0 & X(0))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FXp3 | G!Xp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(p3 R p1) M 1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!XX(0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p1 & X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(p1 R (p2 R (p1 U Xp3)))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) & (Xp0 xor (p0 U Xp2))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "XFX(X(0) xor FX(0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p3 U G(!p2 <-> GFp2)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Xp2 -> XFp2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p0 & p3 & (p3 -> !p0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(!p1 -> X(0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p2 | !p2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 -> FGXp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p1 -> (!p2 -> p1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 496,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(Xp2 R p2) -> p2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Fp0 | X(p3 | Fp3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 -> FX(p0 U (p0 M Gp3))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) -> p2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F!(GFXp0 W 0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FX(p2 <-> p3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p1 xor (p1 xor X(0))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p1 & p3 & !Fp3",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "GXX(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F((p2 R (p1 M Xp3)) R Xp0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(p3 R XX!(p2 | Xp2))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(X(0) -> Xp2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!FX(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 496,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X((p3 R p1) -> p1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(X(0) <-> (!p3 R Fp3))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!p1 W p1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(p2 & Gp2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(p2 & p3)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FXGF!p2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(Gp1 W F(Xp1 W 0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p2 | ((X(0) M Gp3) -> Fp0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(X!p0 M 1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(p2 -> FX(0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 M (Gp2 <-> F!p2)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "(p2 U p1) R X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FX(p1 R Fp1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) W 0",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!(XGp0 M 1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!X(X(0) M 1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "(Gp0 -> (p3 R p0)) R FXp0",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "1 U X!p1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FGXp0 U X(p2 W p1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Xp0 M FXp2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XG!X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(X(0) & (p2 R p0))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "GXFXp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p0 -> FXp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 | G(Fp1 W (0 R !p1))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Xp0 R X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p1 | XF(Xp3 & FX(0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p0 | (!p2 -> (p0 xor !Gp0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XFX(0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p1 U FX!(p2 | Fp2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XF(Fp1 W Xp0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 U (p2 <-> !p2)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G!Xp2",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!G(Fp0 R X(0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p2 & X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X!(p1 | FXp2)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FGX(p0 M p1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Fp0 | G!GF!Xp1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Xp1 | FXp0",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(!p2 R !(!p3 | Gp3))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 496,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FXp1 W !F(Gp3 R p2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XX!F((!p3 U p3) -> p3)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p0 -> Fp0",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 | FX((p2 & p3) U !p3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GX(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(0) xor FX(0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F((p2 | Gp0) R Xp1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 M !FXp0",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Gp2 U (p2 & !p2 & Gp1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "XFX!Fp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) -> p3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(p0 xor !p0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(p3 <-> Gp0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p2 -> Fp2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XXFX((p3 R p0) M 1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G!X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(p0 <-> !p0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!((p2 U p3) & G(!p0 & p3))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) & (p3 -> (1 U p2))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "1 U Xp0",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(!p2 <-> Xp0) R (p2 M !p2)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p3 -> (p3 | (p1 & (1 U p0)))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p2 M !p2",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FXX(p3 | G(Fp1 U p3))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX!p1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FXX(0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Xp0 | F(X(0) W p3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 R X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(!Xp0 M X(p3 M p2))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G!(p0 U Xp1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!(FXp0 W p2)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p0 M G!p0",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FX(0) <-> FXp1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GF(X(p3 xor (p0 xor p3)) W p2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!(Fp3 | F!Xp3)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Fp0 R X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(p0 xor (p0 W p1)) R FXp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FG(p3 | X(0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G!Xp0",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "0 R FXp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "1 U Xp2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(1 U XGp1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(1 U XFp1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(X(0) | ((p2 R p1) U X(0)))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p2 -> (p2 M Fp2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GFXF(p3 R p1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FGFXp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(p2 <-> Xp2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p1 <-> !p1",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Fp3 R X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Xp0 M X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!p3 & X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "XGp1 M 1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Fp2 | FXp0",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "0",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FX(p3 M !p3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GF(Xp2 W p0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G!p3 W (p1 U (p0 | Fp3))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(Fp3 M 1) W F(1 U !p3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!FX(p3 U p1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(p3 xor (p3 M 1))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FX(0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Fp0 W (X(0) -> Xp3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(F(p0 W p3) -> Xp1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X((p3 & Gp3) -> Xp3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p0 M X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(0) & Xp3",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(p0 U X!p2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!X!X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "GF(p3 xor Gp3)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(0) -> p0",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p0 & !p0 & p2",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Gp0 & X!p0",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FXXp2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) -> (p0 | !p1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!F(0 R Xp1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(Fp3 -> (Gp3 <-> FXp1))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "1 U (p0 -> p2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(!(p0 U Fp2) U Fp1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(p2 W !p2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(X(0) -> Xp1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G!p0 & X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "(Fp0 U XXp2) M 1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(p0 | Fp1) -> !(p1 <-> !p1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!Fp0 & G!X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FXp2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(p2 U X!(Fp0 U Xp2))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p0 | (p0 M 1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) M 1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(GFp1 W X(0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(1 U !Xp0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!(p1 <-> !p1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FXFp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FG(p3 | FXp3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F!FX(p0 W p1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "GF!Xp1",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FXF(p2 W (p0 -> p2))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XF(p3 U Xp1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XFX(Xp3 <-> (p0 & Fp3))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p2 & !p2",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(!p1 & Fp1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "(Gp1 -> p1) W p1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p2 | F(p0 | !p0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(!p1 & X(0))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 496,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(0) & Fp2",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Gp0 -> G((p2 U Fp2) U p0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X!(p1 W !p1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(0 R (!p0 M !Xp0))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "(X(0) M 1) W !p1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!(GX(0) -> p2)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p1 | !p1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(!(p2 U p1) U !p0) W p0",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(XFp3 W Fp3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p0 <-> !p0",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "1 U Xp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p1 W (p1 -> Xp0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX!F(p2 & (p2 -> Xp2))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!FX(p0 <-> p2)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!X(0) U (Xp2 M Xp0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(1 U X!p2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G!(p3 | X(0))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(Gp2 <-> Xp2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p1 & !p1",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "GXp1 <-> X(p1 W 0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X!(Gp3 -> p3)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FX!GXp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Gp1 -> (Xp3 U p1)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!G!Xp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p3 M p3",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p0 R (Gp2 -> p2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FXp0",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "1 U XFp2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p3 R FXp1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0 R GX(0))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "XFp1 M 1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Gp1 -> p1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!GX(0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(((p2 <-> p3) W Fp3) R Xp3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!FXp0",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "GX(1 U Xp0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(!p0 -> GXp2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Gp1 -> (p3 | (1 U p0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(Fp2 M p2) -> p2",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p1 W !p1",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GF!XX(p3 -> p2)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(Fp0 W !Fp0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p3 | (1 U (Xp3 -> X(0)))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X!X(0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Gp2 M !p2",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FX(p1 <-> Gp2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(!p0 | Xp3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!(p1 & X(0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(Gp2 W (p1 -> p0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FG(F(p1 & Fp1) U Xp3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(p1 & !(p1 M 1))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(Xp0 W p0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F!p1 R X(0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FX(p0 xor p3)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(p3 <-> (p3 | Fp3))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 496,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p0 & X(0) & Xp0",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(FXp1 W p2)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(p1 R X(0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p0 | FXp3",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!(Xp2 M 1)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!(p2 & GX(0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(p3 W !X(0))",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 M !p3",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(0 R X(0))",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 496,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(p3 & !Fp0)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p3 -> !X(0)",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G!(!p2 W p2)",
+      "split": "train",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "(!(1 U p1) M p1) -> p0",
+      "split": "train",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(p3 <-> Gp1) W !GX(0)",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "0 R X(0)",
+      "split": "val",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "XFXp3",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X!p2 -> !Xp2",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(X(0) & Fp3)",
+      "split": "val",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FGXp3",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) -> ((p2 W p0) R p2)",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(X(0) -> p2)",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(p3 R (XFp1 M 1))",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XX(0)",
+      "split": "val",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "(p0 & !p0) M 1",
+      "split": "val",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(Fp2 <-> GX(0))",
+      "split": "val",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X((p3 -> p0) W p3)",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(GXXFXp3 R Xp3)",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(p0 <-> p1) M X(0)",
+      "split": "val",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G!FXGp3",
+      "split": "val",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(0) -> (Fp3 M !p3)",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FXp1 M 1",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p2 | F(p1 -> (p1 M p3))",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 | (!p3 xor X!FXp2)",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(p3 W 0) -> (p3 U p0)",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FXF!Fp2",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(!Xp1 -> p2)",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XF(p2 -> Xp2)",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(p2 -> (p1 -> p2))",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p2 W !p2",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(p3 & Gp2) -> p2",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(p0 | F(p1 W Xp2))",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GXFp2 | F(p0 <-> Fp0)",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "1",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Gp2 -> p2",
+      "split": "val",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Xp0 & X(!p0 xor X(0))",
+      "split": "val",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "GF!Xp3",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p3 U (Gp0 | !(p3 & Gp0))",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX((p3 M p2) R (p3 xor !p3))",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p0 | FXX(0)",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!X(p2 -> Fp2)",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!F(p2 -> (Xp1 W Fp0))",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!FXX!p2",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(p3 | (XFXp0 W Xp1))",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 496,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(Xp1 | Fp1)",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X!(p0 | !p0)",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(p3 -> (!X(0) -> FGp0))",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p2 | F(0 R Xp3)",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p2 M X(0)",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p3 W (p3 -> (p1 M p0))",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "1 U X!p3",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G!FX(0)",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!X(0) | G(p0 U p1)",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0)",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G((p0 M 1) M !p0)",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(p0 | p1 | p2)",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "1 U Xp1",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(p3 -> XFp0)",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XFXGp0",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "1 U X(p1 | p3)",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GX(0) M 1",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XF(!p3 U (p2 <-> Gp2))",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!G(Fp2 | !Fp2)",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FXGXp1",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(!p1 -> p3) & X(0)",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F!XX(0)",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(Gp3 R p1)",
+      "split": "test",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p0 & Gp0",
+      "split": "test",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!(!Fp3 M (Fp3 M p3))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!(((p1 & p3) W 0) -> XFp0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!(F((p2 & !p2) -> p0) W Fp1)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!(X!Xp1 | F(p3 R GXp1))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!(X(Xp1 U Xp2) M G(p1 xor Gp1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!(XX(0) M 1)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!(p1 & !(p1 <-> !(0 R (!p1 M p1))))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!(p3 M p2) R !G(p1 | !p1)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!F((!p2 R Fp3) U (p2 U X(p1 R p2)))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!F(p0 | Xp2)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!FXX!((p0 | p1) -> Xp2)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!G(Xp3 xor X!(p3 W p2))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!G(p2 xor X!p2) W X!p2",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!X(0) W FXF!p0",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!X(0) | (p1 xor (Fp2 | (p3 xor Gp3)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!XFGXp3",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "!p0 | ((p1 M p0) W p0) | (!p1 xor Fp0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p2 | ((p3 & !p3) -> ((p0 & p2) W p1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p3 U (XGp3 -> (p1 | FGp3))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p3 | (!p3 -> (!p0 W p1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p3 | (p3 M 1)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "!p3 | F(!Xp0 R ((p3 | X(0)) M 1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(!(p0 M 1) W 0) R (!p3 | FXp0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(!p0 & (p1 | !p3)) -> (!p0 | p1)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(!p0 -> !(p0 & Gp1)) W !Gp0",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(!p1 & p3) | XG(p3 | (Gp1 -> !p3))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(!p2 -> (p2 -> (p0 <-> (p0 R Xp3)))) W Fp2",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "((0 R p1) R (p1 M p0)) U !FXp0",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "((p0 -> p3) | !Gp3) W GX(p3 W Gp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 496,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "((p0 | Fp1) U Gp2) M G(p1 & p3)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "((p3 <-> (p0 M Xp1)) W !p2) W p2",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(0 R p2) R FX(X(0) & Fp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(X(0) R FX(0)) W (p3 W p2)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(Xp0 | (1 U GX!p3)) M 1",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(Xp3 W p1) | FX!(Fp2 <-> G!p0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(p1 xor Fp3) U (p3 | Fp1 | Fp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(p2 & p3) R X(0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "(p2 -> !G!Xp1) W !X(p1 | Fp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(p2 -> Fp2) | GFX(p0 & Gp1)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(p2 -> p1) R X(XGp1 -> FXGp1)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(p2 U (X(0) W Xp1)) R X(0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "(p2 U (p1 M p3)) -> ((!p0 xor (p2 -> p0)) W p3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "(p3 U F(Gp2 R Xp0)) W !(p1 xor Gp0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "0 R (p0 | !p0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "1 U (Gp1 U Xp0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "1 U X((p3 -> Gp3) W p2)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F!(!p0 M Xp0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F!(!p2 & (p2 M (Fp1 <-> X(p0 <-> p2))))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F!F(Xp3 | Fp3) W 0",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F!X!G(F(p3 M p1) U p2) W 0",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F(!p3 U (X(p0 W p1) W (!p0 U p0)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F((!Fp1 M Gp3) M G(!p1 U Fp1))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "F((Fp2 U Xp3) | (p3 -> XXp0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F((p0 <-> p2) U (p0 W Xp1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F((p1 -> p0) W (1 U X(p0 | p3)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F((p1 R F(p0 xor Gp0)) W X(0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F((p1 | Fp0) W !p1) W (p0 U Gp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(F!Gp0 | F(F(p0 M 1) M 1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(F!p3 | !(Xp0 -> (p0 & p2)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(F(!p1 | Fp2) -> (p3 -> p0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(F((0 R Fp1) W !p2) R X(0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(Gp1 U X(Gp2 U Fp3))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(X(0) W (p3 xor Fp1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(X(Fp1 xor Fp3) W p1)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(X(p0 W Gp3) W (p1 M (FGp0 W p1)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(X(p1 & Fp0) & (FXp1 W 0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(Xp3 W p0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(p0 W G(p2 U (!p1 R X(0))))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(p2 U G(p0 <-> Gp0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "F(p3 <-> (p3 M 1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FG!X(p1 | F(Xp0 xor Fp3))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FG((p0 | p3) -> FGXXp0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FG(p0 R (XXp3 U X(0)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FGFX!G(p1 U !(p2 M Fp0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FGX(Xp3 -> (X(!p2 M Gp3) R p3))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FGX(p1 | Gp3) U (p3 M !p3)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "FGXGF(p2 W Gp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX!(F!Fp2 xor !Gp0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(!G(p0 <-> !p1) M G(Gp3 M p2))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(!p0 xor (X!XGp3 -> !p0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(((p1 W Xp3) U p0) & !(Xp3 M 1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX((Fp0 W (p0 <-> GFp0)) W GXp2)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX((Xp3 W p1) M (Fp0 xor (p1 M 1)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX((p3 xor Fp2) R XGp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(0 R (p0 & GF(p1 U p2)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(1 U !XX(0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(Xp3 W 0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FX(p2 | !Gp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FXG!(p2 -> FX(0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FXX(p3 M GXF(p0 -> p2))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FXp1 W !(Xp1 U Xp2)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "FXp2 | (p2 R p1)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Fp2 -> F(!p3 xor Fp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Fp3 -> (p3 | !p3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Fp3 | FXXX(0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 495,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G!G(p2 U XG(p3 xor (!p1 -> Xp3)))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G!X(!p1 M (Gp3 M p0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G!p3 & (p3 xor (p3 M p0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(!p2 R X(0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(!p3 W (p2 W Fp3))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(((p3 xor (p1 -> p0)) W p1) R X(0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G((GXp3 -> !FX!p2) M (1 U p2))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G((p3 M !p3) <-> XGXp3)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G((p3 M p1) M F!XGp3)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(Fp0 <-> (G((p1 & p2) -> !p2) R !p0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(Fp1 W X!p1)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(GXp1 -> Xp1)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(GXp1 xor X!G!p0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "G(Gp3 <-> G(X(p2 | Gp1) R p3))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(X(!p2 xor Fp3) U G(FXp1 M 1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(XX(0) M 1)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(p0 | (!p2 W (p2 & (!p1 U p2))))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "G(p1 & !(Xp2 -> Fp1))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "GF(((p1 & Xp1) -> !p0) W (1 U Xp0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GFX!((p2 <-> (p2 -> p1)) R Fp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GFX(p0 | Xp2)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GFXF(p2 U (F(Xp0 -> p3) W p2))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GX!G!X!p0",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "GX(0) & ((p2 M 1) | (Xp1 xor (p3 W 0)))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "GX(Xp0 xor (p1 <-> Fp1))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Gp1 U !X(0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Gp2 -> GXp2",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Gp2 W !G(!p2 & Xp2)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Gp3 & G((Fp1 M GFp0) R XX(0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Gp3 R G(FXp0 & XX(0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Gp3 U (G((p3 -> Fp0) M !p0) M p0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Gp3 | GX(FXp2 W (p2 <-> (p0 | p2)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X!F!p3 W F(Gp0 -> p0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X!Xp3 W X(0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(!Fp0 <-> !G!p0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(!p1 R (p0 W !G!Xp2))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(!p2 & (X!p1 R p2))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(!p2 U (1 U X(!p1 R Xp1)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X((!p0 M X(0)) -> !p2)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X((Fp1 M p2) U p1) M 1",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X((p1 | Xp3) R F(X(0) W p1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) & ((p0 M p1) U !p0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(0) & ((p3 & Fp2) -> (p2 -> !p1))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(0) & (Xp2 M !p0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(0) & GX(0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(0) -> ((p0 U Xp1) R F(p0 <-> Xp3))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) -> (1 U !(!p2 W Gp0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(0) xor (p1 & !Fp0 & Gp0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(0) xor FXGp2",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(1 U Xp2)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(FX!Gp2 W (p3 | (p1 & p3)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(Fp0 -> X(0)) R X(0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(G!X(p2 xor Gp1) M (Xp1 M Gp0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(G!p3 <-> (!(0 R Fp3) M !Fp3))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(GFp1 & !FX(p1 xor p2))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(Gp2 W FX(0))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(X(0) -> ((p2 & (Fp3 -> p3)) -> p1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(X(0) M 1) | GXFX!Xp2",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(XX(p0 | X(0)) M 1)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "X(Xp1 <-> !Xp1)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "X(p2 & Fp0) -> FGX(p1 W Gp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XF(!G(p2 | F(p2 & !p3)) R Xp2)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XF((p3 -> ((Gp0 -> p0) -> p2)) W p3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XFp2 R X(0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "XG!(p3 U X(0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 496,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "XG((p2 xor p3) & !X(0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "XGX(0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "XGp1 W GFGX(p0 | (Gp3 R p2))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XXF(p0 -> (p0 W p3))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "XXXG(Gp3 | (0 R G(p1 W !p1)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Xp0 -> Fp0",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "Xp2 M !FXG((p1 & !p1) xor Fp2)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "Xp2 M 1",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p0 & !(p3 U Fp0)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p0 & (Gp3 R X(0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p0 -> ((1 U !p1) W p0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p0 U FXX(0)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p0 | p2 | (p2 -> (p2 | Gp2))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p1 -> (Xp3 U (p1 <-> Fp1))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p1 <-> (p1 <-> X(0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p1 M (X(0) & Fp3)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p1 M G(!X(0) M X(0))",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p1 W F(p2 W XXGp3)",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 497,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p1 xor !p1",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 500,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p1 | p3 | !p3",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 & X(0) & Gp3 & FXp0 & Gp2",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    },
+    {
+      "formula": "p3 -> (p3 | (1 U (p2 <-> Fp1)))",
+      "split": "ood",
+      "reason": "negative_witness_not_found",
+      "target_label": 1,
+      "attempts": 500,
+      "oracle_checks": 498,
+      "positive_witness_found": true,
+      "negative_witness_found": false
+    },
+    {
+      "formula": "p3 M (0 R F!Xp1)",
+      "split": "ood",
+      "reason": "positive_witness_not_found",
+      "target_label": 0,
+      "attempts": 500,
+      "oracle_checks": 499,
+      "positive_witness_found": false,
+      "negative_witness_found": true
+    }
+  ],
+  "elapsed_generation_seconds": 12.42298089999531
+}

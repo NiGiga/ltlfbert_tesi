@@ -1,0 +1,231 @@
+{
+  "dataset": "/home/gugutca/PycharmProjects/LTLfBERT/data/dataset_10k",
+  "config": {
+    "dataset": "data/dataset_10k",
+    "out": "quality_dataset_10k.json",
+    "props": [
+      "p0",
+      "p1",
+      "p2",
+      "p3"
+    ],
+    "seed": 12345,
+    "pool_size": 1024,
+    "max_formulas": 0,
+    "pairs": 100000,
+    "label_checks": 0,
+    "risk_pairs_per_split": 2000,
+    "min_len": 3,
+    "max_len": 8
+  },
+  "structural": {
+    "examples": 8272,
+    "unique_formulas": 8272,
+    "positive_fraction": 0.501088007736944,
+    "trace_length": {
+      "count": 8272,
+      "mean": 17.930971953578336,
+      "std": 11.928652262514282,
+      "min": 3.0,
+      "p50": 16.0,
+      "p95": 38.0,
+      "max": 40.0
+    },
+    "examples_per_formula": {
+      "count": 8272,
+      "mean": 1.0,
+      "std": 0.0,
+      "min": 1.0,
+      "p50": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "unique_traces": 8179,
+    "trace_duplicate_fraction": 0.011242746615087063,
+    "unique_traces_shared_by_multiple_formulas": 85,
+    "repeated_labeled_rows": 0,
+    "contradictory_formula_trace_pairs": 0,
+    "contradiction_examples": [],
+    "splits": {
+      "train": {
+        "examples": 4487,
+        "unique_formulas": 4487,
+        "positive_fraction": 0.5027858257187431
+      },
+      "val": {
+        "examples": 561,
+        "unique_formulas": 561,
+        "positive_fraction": 0.5044563279857398
+      },
+      "test": {
+        "examples": 559,
+        "unique_formulas": 559,
+        "positive_fraction": 0.49552772808586765
+      },
+      "ood": {
+        "examples": 2665,
+        "unique_formulas": 2665,
+        "positive_fraction": 0.49868667917448406
+      }
+    },
+    "cross_split_overlap": {
+      "train__val": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 4,
+        "shared_formula_trace_pairs": 0
+      },
+      "train__test": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 5,
+        "shared_formula_trace_pairs": 0
+      },
+      "train__ood": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 39,
+        "shared_formula_trace_pairs": 0
+      },
+      "val__test": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 1,
+        "shared_formula_trace_pairs": 0
+      },
+      "val__ood": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 8,
+        "shared_formula_trace_pairs": 0
+      },
+      "test__ood": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 4,
+        "shared_formula_trace_pairs": 0
+      }
+    }
+  },
+  "syntax": {
+    "size": {
+      "count": 8272,
+      "mean": 7.581600580270793,
+      "std": 2.7832507035410505,
+      "min": 1.0,
+      "p50": 7.0,
+      "p95": 13.0,
+      "max": 14.0
+    },
+    "depth": {
+      "count": 8272,
+      "mean": 4.606262088974855,
+      "std": 1.30598031277052,
+      "min": 1.0,
+      "p50": 4.0,
+      "p95": 7.0,
+      "max": 10.0
+    },
+    "operator_histogram": {
+      "Not": 5464,
+      "W": 2053,
+      "Equiv": 1876,
+      "ff": 1258,
+      "Implies": 1639,
+      "F": 4378,
+      "U": 2291,
+      "And": 1600,
+      "G": 4734,
+      "R": 2149,
+      "M": 2177,
+      "tt": 730,
+      "X": 5452,
+      "Or": 1590,
+      "Xor": 1781
+    },
+    "atomic_proposition_histogram": {
+      "p0": 5987,
+      "p3": 5792,
+      "p1": 5868,
+      "p2": 5896
+    },
+    "operator_entropy_bits": 3.6848667922362788
+  },
+  "label_validation": {
+    "checked_rows": 8272,
+    "all_rows_checked": true,
+    "mismatches": 0,
+    "mismatch_fraction": 0.0,
+    "mismatch_examples": []
+  },
+  "semantic": {
+    "evaluated_formulas": 8272,
+    "pool_size": 1024,
+    "sat_rate": {
+      "count": 8272,
+      "mean": 0.5169426274253506,
+      "std": 0.29221262574281814,
+      "min": 0.0009765625,
+      "p50": 0.505859375,
+      "p95": 0.9677734375,
+      "max": 1.0
+    },
+    "all_false_signatures": 0,
+    "all_true_signatures": 2,
+    "unique_signatures": 5521,
+    "formulas_beyond_one_per_signature": 2751,
+    "largest_signature_group": 84,
+    "pair_sampling": "uniform with replacement, excluding self-pairs",
+    "sampled_pairs": 100000,
+    "jaccard": {
+      "count": 100000,
+      "mean": 0.31117966428228594,
+      "std": 0.2318920903744606,
+      "min": 0.0,
+      "p50": 0.29762517777450836,
+      "p95": 0.7515183413078143,
+      "max": 1.0
+    },
+    "signed_phi_nonconstant_pairs": {
+      "count": 99941,
+      "mean": 0.005918440958540259,
+      "std": 0.15957798750310603,
+      "min": -1.0,
+      "p50": 0.0020766308635845753,
+      "p95": 0.23368347332075343,
+      "max": 1.0
+    },
+    "absolute_phi_nonconstant_pairs": {
+      "count": 99941,
+      "mean": 0.0892829643220384,
+      "std": 0.13239605100149632,
+      "min": 0.0,
+      "p50": 0.04154840689959717,
+      "p95": 0.3504354049690478,
+      "max": 1.0
+    },
+    "phi_undefined_pairs": 59,
+    "sampled_identical_signature_fraction": 0.00116,
+    "sampled_complementary_signature_fraction": 0.00092
+  },
+  "contrastive_negative_risk": {
+    "sampling_policy": "Within each split: anchor sampled from positive rows; candidate sampled from positive rows of a different formula. This is a proxy, not a measurement of the actual training sampler.",
+    "splits": {
+      "ood": {
+        "checked_candidate_negatives": 2000,
+        "actually_satisfying_pairs": 1022,
+        "estimated_false_negative_fraction": 0.511
+      },
+      "train": {
+        "checked_candidate_negatives": 2000,
+        "actually_satisfying_pairs": 1022,
+        "estimated_false_negative_fraction": 0.511
+      },
+      "test": {
+        "checked_candidate_negatives": 2000,
+        "actually_satisfying_pairs": 1032,
+        "estimated_false_negative_fraction": 0.516
+      },
+      "val": {
+        "checked_candidate_negatives": 2000,
+        "actually_satisfying_pairs": 1108,
+        "estimated_false_negative_fraction": 0.554
+      }
+    }
+  },
+  "elapsed_seconds": 50.56132734900166
+}

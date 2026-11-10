@@ -1,0 +1,231 @@
+{
+  "dataset": "/home/gugutca/PycharmProjects/LTLfBERT/data/dataset_5k",
+  "config": {
+    "dataset": "data/dataset_5k",
+    "out": "quality_dataset_5k.json",
+    "props": [
+      "p0",
+      "p1",
+      "p2",
+      "p3"
+    ],
+    "seed": 12345,
+    "pool_size": 1024,
+    "max_formulas": 0,
+    "pairs": 100000,
+    "label_checks": 0,
+    "risk_pairs_per_split": 2000,
+    "min_len": 3,
+    "max_len": 8
+  },
+  "structural": {
+    "examples": 4268,
+    "unique_formulas": 4268,
+    "positive_fraction": 0.5009372071227741,
+    "trace_length": {
+      "count": 4268,
+      "mean": 5.224461105904405,
+      "std": 1.7173085361619747,
+      "min": 3.0,
+      "p50": 5.0,
+      "p95": 8.0,
+      "max": 8.0
+    },
+    "examples_per_formula": {
+      "count": 4268,
+      "mean": 1.0,
+      "std": 0.0,
+      "min": 1.0,
+      "p50": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "unique_traces": 4153,
+    "trace_duplicate_fraction": 0.0269447047797563,
+    "unique_traces_shared_by_multiple_formulas": 107,
+    "repeated_labeled_rows": 0,
+    "contradictory_formula_trace_pairs": 0,
+    "contradiction_examples": [],
+    "splits": {
+      "train": {
+        "examples": 2311,
+        "unique_formulas": 2311,
+        "positive_fraction": 0.49718736477715275
+      },
+      "val": {
+        "examples": 289,
+        "unique_formulas": 289,
+        "positive_fraction": 0.5051903114186851
+      },
+      "test": {
+        "examples": 289,
+        "unique_formulas": 289,
+        "positive_fraction": 0.5017301038062284
+      },
+      "ood": {
+        "examples": 1379,
+        "unique_formulas": 1379,
+        "positive_fraction": 0.5061638868745467
+      }
+    },
+    "cross_split_overlap": {
+      "train__val": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 9,
+        "shared_formula_trace_pairs": 0
+      },
+      "train__test": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 8,
+        "shared_formula_trace_pairs": 0
+      },
+      "train__ood": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 46,
+        "shared_formula_trace_pairs": 0
+      },
+      "val__test": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 3,
+        "shared_formula_trace_pairs": 0
+      },
+      "val__ood": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 6,
+        "shared_formula_trace_pairs": 0
+      },
+      "test__ood": {
+        "shared_textual_formulas": 0,
+        "shared_traces": 2,
+        "shared_formula_trace_pairs": 0
+      }
+    }
+  },
+  "syntax": {
+    "size": {
+      "count": 4268,
+      "mean": 7.451265229615745,
+      "std": 2.8482744068077634,
+      "min": 1.0,
+      "p50": 6.0,
+      "p95": 13.0,
+      "max": 14.0
+    },
+    "depth": {
+      "count": 4268,
+      "mean": 4.548969072164948,
+      "std": 1.3358973431072023,
+      "min": 1.0,
+      "p50": 4.0,
+      "p95": 7.0,
+      "max": 10.0
+    },
+    "operator_histogram": {
+      "Not": 2778,
+      "W": 1024,
+      "Equiv": 958,
+      "ff": 632,
+      "Implies": 857,
+      "F": 2278,
+      "U": 1143,
+      "And": 805,
+      "G": 2416,
+      "R": 1060,
+      "M": 1099,
+      "tt": 388,
+      "X": 2795,
+      "Or": 792,
+      "Xor": 872
+    },
+    "atomic_proposition_histogram": {
+      "p0": 3060,
+      "p3": 2925,
+      "p1": 3000,
+      "p2": 2920
+    },
+    "operator_entropy_bits": 3.679963772352969
+  },
+  "label_validation": {
+    "checked_rows": 4268,
+    "all_rows_checked": true,
+    "mismatches": 0,
+    "mismatch_fraction": 0.0,
+    "mismatch_examples": []
+  },
+  "semantic": {
+    "evaluated_formulas": 4268,
+    "pool_size": 1024,
+    "sat_rate": {
+      "count": 4268,
+      "mean": 0.5173827209758669,
+      "std": 0.29958417303251644,
+      "min": 0.0009765625,
+      "p50": 0.505859375,
+      "p95": 0.970703125,
+      "max": 1.0
+    },
+    "all_false_signatures": 0,
+    "all_true_signatures": 3,
+    "unique_signatures": 3028,
+    "formulas_beyond_one_per_signature": 1240,
+    "largest_signature_group": 44,
+    "pair_sampling": "uniform with replacement, excluding self-pairs",
+    "sampled_pairs": 100000,
+    "jaccard": {
+      "count": 100000,
+      "mean": 0.3097277845196828,
+      "std": 0.2389662053978235,
+      "min": 0.0,
+      "p50": 0.2947133786985844,
+      "p95": 0.7682996479497489,
+      "max": 1.0
+    },
+    "signed_phi_nonconstant_pairs": {
+      "count": 99838,
+      "mean": 0.006039435065660534,
+      "std": 0.16132339188509107,
+      "min": -1.0,
+      "p50": 0.002557457614672445,
+      "p95": 0.23242716405920316,
+      "max": 1.0
+    },
+    "absolute_phi_nonconstant_pairs": {
+      "count": 99838,
+      "mean": 0.08954253071161458,
+      "std": 0.1343273864071752,
+      "min": 0.0,
+      "p50": 0.04136591495987817,
+      "p95": 0.3525989221512579,
+      "max": 1.0
+    },
+    "phi_undefined_pairs": 162,
+    "sampled_identical_signature_fraction": 0.00147,
+    "sampled_complementary_signature_fraction": 0.00115
+  },
+  "contrastive_negative_risk": {
+    "sampling_policy": "Within each split: anchor sampled from positive rows; candidate sampled from positive rows of a different formula. This is a proxy, not a measurement of the actual training sampler.",
+    "splits": {
+      "ood": {
+        "checked_candidate_negatives": 2000,
+        "actually_satisfying_pairs": 1055,
+        "estimated_false_negative_fraction": 0.5275
+      },
+      "train": {
+        "checked_candidate_negatives": 2000,
+        "actually_satisfying_pairs": 1035,
+        "estimated_false_negative_fraction": 0.5175
+      },
+      "test": {
+        "checked_candidate_negatives": 2000,
+        "actually_satisfying_pairs": 1085,
+        "estimated_false_negative_fraction": 0.5425
+      },
+      "val": {
+        "checked_candidate_negatives": 2000,
+        "actually_satisfying_pairs": 1039,
+        "estimated_false_negative_fraction": 0.5195
+      }
+    }
+  },
+  "elapsed_seconds": 25.655794873993727
+}
