@@ -103,11 +103,18 @@ def entropy(counter):
 # ----------------------------------------------------------------------
 def formula_signatures(formulas, vals, valid):
     """Evaluate the existing held-out pool using the shared Spot oracle."""
-    from data.generate_dataset import (
-        PROPS,
-        build_ltlf_oracle,
-        trace_to_spot_word,
-    )
+    try:
+        from generate_dataset import (
+            PROPS,
+            build_ltlf_oracle,
+            trace_to_spot_word,
+        )
+    except ImportError:
+        from data.generate_dataset import (
+            PROPS,
+            build_ltlf_oracle,
+            trace_to_spot_word,
+        )
 
     words = []
 
@@ -265,12 +272,15 @@ def main():
                     help="lunghezza massima delle tracce di valutazione")
     ap.add_argument("--seed", type=int, default=12345,
                     help="diverso dal seed del GP -> pool indipendente")
-    ap.add_argument("--out", default="report.json")
+    default_out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "report.json")
+    ap.add_argument("--out", default=default_out,
+                    help="path del file report JSON (default: gp/report.json)")
 
     args = ap.parse_args()
 
     if args.run_gp:
-        subprocess.run([sys.executable, "gp_ltlf.py", "--output-dir", args.b,
+        gp_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gp_ltlf.py")
+        subprocess.run([sys.executable, gp_script, "--output-dir", args.b,
                         *args.gp_args], check=True)
 
     rng = np.random.default_rng(args.seed)
@@ -285,6 +295,15 @@ def main():
     report = {"A": ma, "B": mb, "cross": cross}
     with open(args.out, "w") as fp:
         json.dump(report, fp, indent=2)
+
+    # Assicura sincronizzazione anche con la root del repository
+    root_report = os.path.join(BASE_DIR, "report.json")
+    if os.path.abspath(args.out) != os.path.abspath(root_report):
+        try:
+            with open(root_report, "w") as fp:
+                json.dump(report, fp, indent=2)
+        except Exception:
+            pass
 
     # tabella a console
     keys = [k for k in ma if k != "op_hist"]

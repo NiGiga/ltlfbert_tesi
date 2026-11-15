@@ -10,7 +10,7 @@ Pipeline:
     penalizza la similarità con le formule già nell'archivio.
  2. Le migliori formule (mutuamente ortogonali) entrano nell'archivio.
  3. Si generano train/val/test/ood riusando le funzioni di
-    generate_dataset_randltl.py (stesso formato JSON).
+    generate_dataset.py (stesso formato JSON).
 """
 
 import argparse
@@ -317,8 +317,13 @@ def sample_traces_fast(node, n_pos, n_neg, rng, min_len=MIN_LEN, max_len=MAX_LEN
 
 
 def build_dataset(formulas, output_dir, traces_per_formula, seed, min_len=MIN_LEN, max_len=MAX_LEN, use_fast_sampler=True):
-    from generate_dataset_randltl import (build_dfa, sample_traces_for_formula,
-                                          trace_to_str)
+    try:
+        from generate_dataset import (build_dfa, sample_traces_for_formula,
+                                      trace_to_str)
+    except ImportError:
+        from data.generate_dataset import (build_ltlf_oracle as build_dfa,
+                                           sample_traces_for_formula,
+                                           trace_to_str)
     random.seed(seed)
     rng = np.random.default_rng(seed)
     os.makedirs(output_dir, exist_ok=True)
@@ -357,7 +362,10 @@ def build_dataset(formulas, output_dir, traces_per_formula, seed, min_len=MIN_LE
 
 def verify_against_spot(formulas, vals, valid, n_check=100):
     """Controllo: il mio evaluator concorda con il DFA Spot del tuo script?"""
-    from generate_dataset_randltl import accepts_trace, build_dfa
+    try:
+        from generate_dataset import accepts_trace, build_dfa
+    except ImportError:
+        from data.generate_dataset import accepts_trace, build_ltlf_oracle as build_dfa
     bad = 0
     total_checks = 0
     for f, _ in formulas[:20]:
