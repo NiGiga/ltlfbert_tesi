@@ -187,7 +187,11 @@ Even with global deduplication and zero split leakage, purely random syntactic s
 Let us inspect sample formulas directly from the baseline dataset."""
     cells.append(make_markdown_cell(md_sec1))
 
-    code_sec1 = """baseline_train_path = os.path.join(root_dir, 'data', 'train.json')
+    code_sec1 = """baseline_train_candidates = [
+    os.path.join(root_dir, 'data', 'dataset', 'train.json'),
+    os.path.join(root_dir, 'data', 'train.json'),
+]
+baseline_train_path = next((p for p in baseline_train_candidates if os.path.exists(p)), baseline_train_candidates[0])
 with open(baseline_train_path, 'r') as fp:
     baseline_data = json.load(fp)
 
@@ -615,12 +619,15 @@ print(f"   GP-Evolved:                  [{ascii_bar(B['pair_sim_max'], 1.0)}] {B
         json.dump(notebook, fp, indent=2)
 
     root_nb_path = os.path.join(BASE_DIR, "gp_presentation.ipynb")
-    with open(root_nb_path, "w", encoding="utf-8") as fp:
-        json.dump(notebook, fp, indent=2)
-
-    print(f"\nSuccessfully generated and refreshed Jupyter Notebooks:")
-    print(f"  - {nb_path}")
-    print(f"  - {root_nb_path}")
+    if os.path.exists(root_nb_path):
+        with open(root_nb_path, "w", encoding="utf-8") as fp:
+            json.dump(notebook, fp, indent=2)
+        print(f"\nSuccessfully generated and refreshed Jupyter Notebooks:")
+        print(f"  - {nb_path}")
+        print(f"  - {root_nb_path}")
+    else:
+        print(f"\nSuccessfully generated and refreshed Jupyter Notebook:")
+        print(f"  - {nb_path}")
 
 
 if __name__ == "__main__":

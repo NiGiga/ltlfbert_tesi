@@ -15,10 +15,12 @@ import sys
 from collections import Counter
 import pickle
 
-# Assicura che la root del repository sia sempre in sys.path
+# Assicura che la root del repository e gp siano sempre in sys.path
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if BASE_DIR not in sys.path:
-    sys.path.insert(0, BASE_DIR)
+GP_DIR = os.path.dirname(os.path.abspath(__file__))
+for p in [BASE_DIR, GP_DIR]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 import numpy as np
 import spot
@@ -83,10 +85,22 @@ def size_depth_ops(f):
 # ----------------------------------------------------------------------
 # Caricamento
 # ----------------------------------------------------------------------
+def resolve_dir(dirpath):
+    if os.path.isabs(dirpath):
+        return dirpath
+    if os.path.exists(dirpath):
+        return os.path.abspath(dirpath)
+    base_candidate = os.path.join(BASE_DIR, dirpath)
+    if os.path.exists(base_candidate):
+        return base_candidate
+    return dirpath
+
+
 def load(dirpath):
+    resolved = resolve_dir(dirpath)
     data = {}
     for s in SPLITS:
-        p = os.path.join(dirpath, f"{s}.json")
+        p = os.path.join(resolved, f"{s}.json")
         if os.path.exists(p):
             with open(p) as fp:
                 data[s] = json.load(fp)
@@ -258,8 +272,8 @@ def op_kl(opa, opb, eps=1e-9):
 # ----------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--a", default="data/dataset" ,required=True, help="dir dataset A (randltl)")
-    ap.add_argument("--b", default="data_gp", help="dir dataset B (GP)")
+    ap.add_argument("--a", default="data/dataset", help="dir dataset A (randltl, default: data/dataset)")
+    ap.add_argument("--b", default="data_gp", help="dir dataset B (GP, default: data_gp)")
     ap.add_argument("--run-gp", action="store_true",
                     help="lancia gp_ltlf.py per generare B")
     ap.add_argument("--gp-args", nargs=argparse.REMAINDER, default=[],
@@ -278,9 +292,10 @@ def main():
 
     args = ap.parse_args()
 
+    b_dir = resolve_dir(args.b)
     if args.run_gp:
         gp_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gp_ltlf.py")
-        subprocess.run([sys.executable, gp_script, "--output-dir", args.b,
+        subprocess.run([sys.executable, gp_script, "--output-dir", b_dir,
                         *args.gp_args], check=True)
 
     rng = np.random.default_rng(args.seed)

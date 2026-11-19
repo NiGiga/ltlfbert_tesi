@@ -17,7 +17,14 @@ import argparse
 import json
 import os
 import random
+import sys
 import time
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+GP_DIR = os.path.dirname(os.path.abspath(__file__))
+for p in [BASE_DIR, GP_DIR]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 import numpy as np
 from deap import base, creator, gp, tools
@@ -431,14 +438,16 @@ def main():
         print(f"formule={len(formulas):5d} (+{len(new)}) "
               f"t={time.perf_counter() - t0:.0f}s")
 
+    output_dir = args.output_dir if os.path.isabs(args.output_dir) else os.path.join(BASE_DIR, args.output_dir)
+
     formulas = formulas[:args.n_formulas]
-    os.makedirs(args.output_dir, exist_ok=True)
-    with open(os.path.join(args.output_dir, "formulas.json"), "w") as fp:
+    os.makedirs(output_dir, exist_ok=True)
+    with open(os.path.join(output_dir, "formulas.json"), "w") as fp:
         json.dump(formulas, fp, indent=2)
 
     if args.verify:
         verify_against_spot(formulas, vals, valid)
-    build_dataset(formulas, args.output_dir, args.traces_per_formula, args.seed,
+    build_dataset(formulas, output_dir, args.traces_per_formula, args.seed,
                   min_len=args.min_len, max_len=args.max_len,
                   use_fast_sampler=not args.slow_spot_sampler)
 

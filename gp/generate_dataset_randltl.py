@@ -12,6 +12,13 @@ featuring:
   - Atomic JSON writes and generation reports
 """
 
+import os
+import sys
+
+_GP_DIR = os.path.dirname(os.path.abspath(__file__))
+if _GP_DIR not in sys.path:
+    sys.path.insert(0, _GP_DIR)
+
 from generate_dataset import (  # noqa: F401
     AP,
     PROPS,

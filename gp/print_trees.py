@@ -215,13 +215,19 @@ def main():
         print_single_formula(args.formula, show_dot=args.dot)
         return
 
-    if not os.path.exists(args.file):
-        print(f"Error: File '{args.file}' not found.", file=sys.stderr)
-        sys.exit(1)
+    target_file = args.file
+    if not os.path.exists(target_file):
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        candidate = os.path.join(base_dir, target_file)
+        if os.path.exists(candidate):
+            target_file = candidate
+        else:
+            print(f"Error: File '{args.file}' not found.", file=sys.stderr)
+            sys.exit(1)
 
-    formulas = load_formulas(args.file)
+    formulas = load_formulas(target_file)
     if not formulas:
-        print(f"No formulas found in '{args.file}'.", file=sys.stderr)
+        print(f"No formulas found in '{target_file}'.", file=sys.stderr)
         sys.exit(1)
 
     # Remove duplicates preserving order
