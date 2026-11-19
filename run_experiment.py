@@ -26,7 +26,7 @@ def main():
     args = p.parse_args()
 
     # ── Parametri e Cartelle Dinamiche ──────────────────────────────────────
-    base_dir = "ltlfbert"
+    base_dir = "src/ltlfbert"
 
     # Setup ambienti
     mode = "quick" if args.quick else "comp"
@@ -61,7 +61,7 @@ def main():
     # ── 2. Pre-training ──────────────────────────────────────────────────────
     print("\n" + "=" * 60 + "\nSTEP 2: Pre-training Contrastivo (LTLfBERT)\n" + "=" * 60)
     if not args.skip_pretrain:
-        from training.pretrain import pretrain
+        from src.training.pretrain import pretrain
         pretrain(
             data_dir=DATA, output_dir=CKPT,
             epochs=PRETRAIN_EPOCHS, batch_size=BATCH, use_lora=USE_LORA,
@@ -78,7 +78,7 @@ def main():
     print(f"VRAM libera prima del fine-tuning: {torch.cuda.mem_get_info()[0] / 1e9:.2f} GB")
 
     # ── 3. Fine-tuning ────────────────────────────────────────────────────────
-    from training.finetune import finetune_conformance
+    from src.training import finetune_conformance
 
     if not args.skip_baseline:
         print("\n" + "=" * 60 + "\nSTEP 3a: Fine-tuning Baseline (CodeBERT puro)\n" + "=" * 60)
@@ -105,7 +105,7 @@ def main():
 
     # ── 4. Valutazione & Confronto ────────────────────────────────────────────
     print("\n" + "=" * 60 + "\nSTEP 4: Valutazione Completa\n" + "=" * 60)
-    from evaluation.evaluate import full_evaluation
+    from src.evaluation import full_evaluation
     full_evaluation(
         data_dir=DATA,
         baseline_ckpt=os.path.join(OUTDIR, "baseline_best.pt"),

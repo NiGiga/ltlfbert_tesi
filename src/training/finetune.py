@@ -14,7 +14,7 @@ from transformers import AutoTokenizer
 from sklearn.metrics import accuracy_score, f1_score
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from models.ltlfbert import LTLfBERT, ConformanceClassifier
+from src.models.ltlfbert import LTLfBERT, ConformanceClassifier
 
 
 #  DATASET

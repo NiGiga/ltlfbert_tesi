@@ -280,7 +280,7 @@ The strongest result is that the pre-trained model reaches a substantially highe
 
 ### Final test and OOD F1 comparison
 
-![F1](ltlfbert/grafici/comparison_f1.png)
+![F1](src/ltlfbert/grafici/comparison_f1.png)
 
 The grouped bar chart confirms the main experimental finding: LTLfBERT outperforms the baseline on both in-distribution test data and out-of-distribution formulas in the mid and comprehensive runs. 
 The quick run shows little or no advantage, which matches the idea that contrastive pre-training needs enough data and training time to become effective. 

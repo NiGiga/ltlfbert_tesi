@@ -17,7 +17,7 @@ from collections import defaultdict
 
 # Aggiunge il root del progetto al path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from models.ltlfbert import LTLfBERT, NTXentLoss
+from src.models.ltlfbert import LTLfBERT, NTXentLoss
 
 
 # ─── DATASET ────────────────────────────────────────────────────────────────

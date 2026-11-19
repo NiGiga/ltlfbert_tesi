@@ -258,7 +258,7 @@ def op_kl(opa, opb, eps=1e-9):
 # ----------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--a", required=True, help="dir dataset A (randltl)")
+    ap.add_argument("--a", default="data/dataset" ,required=True, help="dir dataset A (randltl)")
     ap.add_argument("--b", default="data_gp", help="dir dataset B (GP)")
     ap.add_argument("--run-gp", action="store_true",
                     help="lancia gp_ltlf.py per generare B")

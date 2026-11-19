@@ -11,7 +11,6 @@ import os
 import sys
 import numpy as np
 import torch
-from torch.utils.data import DataLoader
 from transformers import AutoTokenizer
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -21,8 +20,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from models.ltlfbert import LTLfBERT
-from training.finetune import ConformanceDataset, evaluate
+from src.models.ltlfbert import LTLfBERT
 
 
 # ─── RETRIEVAL ───────────────────────────────────────────────────────────────

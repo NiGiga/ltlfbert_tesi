@@ -829,7 +829,7 @@ def main():
     parser.add_argument("--traces-per-formula", type=int, default=1, help="Traces per formula (1 or even number).")
     parser.add_argument("--complexity-buckets", type=int, nargs="+", default=[6, 10, 14])
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--output-dir", type=str, default=None)
+    parser.add_argument("--output-dir", type=str, default="data/dataset")
     parser.add_argument("--train-frac", type=float, default=0.8)
     parser.add_argument("--val-frac", type=float, default=0.1)
     parser.add_argument("--test-frac", type=float, default=0.1)
