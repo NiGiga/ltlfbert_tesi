@@ -12,5 +12,10 @@ __pycache__/
 *.pt
 *.bin
 *.safetensors
-dataset/S
+data/dataset
+data/dataset_5k
+data/dataset_10k
+data_gp
+run_hpc_pipeline.slurm
+setup_demetra_env.sh
 *.csv
