@@ -251,7 +251,7 @@ def dataset_metrics(data, vals, valid):
 def cross_metrics(fa, Sa, fb, Sb):
     common = set(fa) & set(fb)
     # per ogni formula di B, la similarità max con A (e viceversa)
-    b_to_a = [similarity(Sb[i], Sa) for i in range(len(fb))]
+    b_to_a = [similarity(Sb[i], Sa) for i in range(min(len(fb), 500))]
     a_to_b = [similarity(Sa[i], Sb) for i in range(min(len(fa), 500))]
     return {
         "common_formulas": len(common),

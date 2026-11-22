@@ -239,6 +239,8 @@ class Evaluator:
         nested = to_nested(ind)
         s = to_spot_str(nested)
         if s not in self.cache:
+            if len(self.cache) >= 50000:
+                self.cache.clear()
             self.cache[s] = signature(nested, self.vals, self.valid)
         return s, self.cache[s]
 
@@ -430,13 +432,17 @@ def main():
 
     seen, formulas = set(), []
     t0, stall = time.perf_counter(), 0
-    while len(formulas) < args.n_formulas and stall < 50:
+    max_stall = 25
+    while len(formulas) < args.n_formulas and stall < max_stall:
         new = run_round(tb, ev, args.pop_size, args.n_gen, 0.7, 0.3,
                         args.k_add, args.sim_thr, seen)
         formulas += new
         stall = 0 if new else stall + 1
         print(f"formule={len(formulas):5d} (+{len(new)}) "
-              f"t={time.perf_counter() - t0:.0f}s")
+              f"t={time.perf_counter() - t0:.0f}s (stall={stall}/{max_stall})", flush=True)
+        if stall % 5 == 0:
+            import gc
+            gc.collect()
 
     output_dir = args.output_dir if os.path.isabs(args.output_dir) else os.path.join(BASE_DIR, args.output_dir)
 
