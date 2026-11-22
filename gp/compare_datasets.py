@@ -159,7 +159,7 @@ def formula_signatures(formulas, vals, valid):
                 f"Spot evaluation failed for formula: {formula}"
             ) from exc
 
-        if index % 100 == 0:
+        if index % 200 == 0 or index == len(formulas):
             print(
                 f"[compare/Spot] {index}/{len(formulas)} formulas",
                 flush=True,
@@ -194,7 +194,7 @@ def pairwise_stats(S, max_pairs=200_000, rng=None):
     }
 
 
-def dataset_metrics(data, vals, valid):
+def dataset_metrics(data, vals, valid, max_eval=2000, rng=None):
     all_rows = [r for s in data.values() for r in s]
     formulas = sorted({r["formula"] for r in all_rows})
     out = {"n_examples": len(all_rows), "n_unique_formulas": len(formulas)}
@@ -237,7 +237,14 @@ def dataset_metrics(data, vals, valid):
     out["formula_leak_across_splits"] = leak
 
     # semantiche
-    ok, S = formula_signatures(formulas, vals, valid)
+    formulas_to_eval = formulas
+    if max_eval and len(formulas) > max_eval:
+        eval_rng = rng or np.random.default_rng(42)
+        indices = eval_rng.choice(len(formulas), max_eval, replace=False)
+        formulas_to_eval = [formulas[i] for i in sorted(indices)]
+        print(f"[compare] Campionamento semantico: {max_eval}/{len(formulas)} formule", flush=True)
+
+    ok, S = formula_signatures(formulas_to_eval, vals, valid)
     out["n_formulas_evaluable"] = len(ok)
     out["sat_rate_mean"] = float(S.mean())
     out["sat_rate_std"] = float(S.mean(1).std())
@@ -286,6 +293,8 @@ def main():
                     help="lunghezza massima delle tracce di valutazione")
     ap.add_argument("--seed", type=int, default=12345,
                     help="diverso dal seed del GP -> pool indipendente")
+    ap.add_argument("--max-eval", type=int, default=2000,
+                    help="numero massimo di formule campionate per le metriche semantiche (0 = tutte)")
     default_out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "report.json")
     ap.add_argument("--out", default=default_out,
                     help="path del file report JSON (default: gp/report.json)")
@@ -302,12 +311,14 @@ def main():
     vals, valid = make_trace_pool(args.eval_pool, rng, min_len=args.min_len, max_len=args.max_len)
 
     A, B = load(args.a), load(args.b)
-    ma, fa, Sa = dataset_metrics(A, vals, valid)
-    mb, fb, Sb = dataset_metrics(B, vals, valid)
+    ma, fa, Sa = dataset_metrics(A, vals, valid, max_eval=args.max_eval, rng=rng)
+    mb, fb, Sb = dataset_metrics(B, vals, valid, max_eval=args.max_eval, rng=rng)
     cross = cross_metrics(fa, Sa, fb, Sb)
     cross["op_KL(A||B)"] = op_kl(ma["op_hist"], mb["op_hist"])
 
     report = {"A": ma, "B": mb, "cross": cross}
+    out_dir = os.path.dirname(os.path.abspath(args.out))
+    os.makedirs(out_dir, exist_ok=True)
     with open(args.out, "w") as fp:
         json.dump(report, fp, indent=2)
 
