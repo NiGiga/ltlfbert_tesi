@@ -116,52 +116,42 @@ def entropy(counter):
 # Metriche per singolo dataset
 # ----------------------------------------------------------------------
 def formula_signatures(formulas, vals, valid):
-    """Evaluate the existing held-out pool using the shared Spot oracle."""
-    try:
-        from generate_dataset import (
-            PROPS,
-            build_ltlf_oracle,
-            trace_to_spot_word,
-        )
-    except ImportError:
-        from data.generate_dataset import (
-            PROPS,
-            build_ltlf_oracle,
-            trace_to_spot_word,
-        )
-
-    words = []
-
-    for index in range(valid.shape[0]):
-        length = int(valid[index].sum())
-
-        trace = [
-            {
-                proposition
-                for column, proposition in enumerate(PROPS)
-                if vals[index, position, column]
-            }
-            for position in range(length)
-        ]
-
-        words.append(trace_to_spot_word(trace))
-
+    """Calcola le firme semantiche sul pool di tracce held-out.
+    
+    Usa l'evaluator vettorizzato sem() tramite spot_to_nested(), che è
+    centinaia di volte più veloce di Spot DFA ed evita il freeze esponenziale
+    nella minimizzazione degli automi di Buchi su formule complesse.
+    """
     signatures = []
+    words = None  # Inizializzato solo se serve fallback su Spot
 
     for index, formula in enumerate(formulas, start=1):
         try:
-            aut = build_ltlf_oracle(formula)
-            signatures.append(
-                [bool(aut.intersects(word)) for word in words]
-            )
-        except Exception as exc:
-            raise RuntimeError(
-                f"Spot evaluation failed for formula: {formula}"
-            ) from exc
+            nested = spot_to_nested(formula)
+            sig = signature(nested, vals, valid)
+            signatures.append(sig)
+        except Exception:
+            # Fallback di sicurezza su Spot per formule con costrutti esotici
+            try:
+                from generate_dataset import PROPS, build_ltlf_oracle, trace_to_spot_word
+            except ImportError:
+                from data.generate_dataset import PROPS, build_ltlf_oracle, trace_to_spot_word
 
-        if index % 200 == 0 or index == len(formulas):
+            if words is None:
+                words = []
+                for idx in range(valid.shape[0]):
+                    L = int(valid[idx].sum())
+                    tr = [{AP[col] for col in range(len(AP)) if vals[idx, pos, col]} for pos in range(L)]
+                    words.append(trace_to_spot_word(tr, props=AP))
+            try:
+                aut = build_ltlf_oracle(formula)
+                signatures.append([bool(aut.intersects(w)) for w in words])
+            except Exception as exc:
+                raise RuntimeError(f"Valutazione Spot fallita per la formula: {formula}") from exc
+
+        if index % 500 == 0 or index == len(formulas):
             print(
-                f"[compare/Spot] {index}/{len(formulas)} formulas",
+                f"[compare/Sem] {index}/{len(formulas)} formule valutate",
                 flush=True,
             )
 

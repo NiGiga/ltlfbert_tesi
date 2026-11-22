@@ -319,8 +319,10 @@ def main():
                         help="Dimensione della popolazione per ciascuna isola (default: 60)")
     parser.add_argument("--gen-per-epoch", type=int, default=10,
                         help="Generazioni DEAP per isola prima di migrazione e raccolta (default: 10)")
-    parser.add_argument("--max-epochs", type=int, default=500,
-                        help="Numero massimo di epoche globali prima dell'arresto (default: 500)")
+    parser.add_argument("--max-epochs", type=int, default=2000,
+                        help="Numero massimo di epoche globali prima dell'arresto (default: 2000)")
+    parser.add_argument("--resume", action="store_true",
+                        help="Riprende dall'archivio formulas.json esistente nella cartella output senza ricominciare da zero")
     parser.add_argument("--max-stall-epochs", type=int, default=20,
                         help="Epoche consecutive senza nuove formule prima dello stop per saturazione (default: 20)")
     parser.add_argument("--sim-thr", type=float, default=0.6,
@@ -366,6 +368,28 @@ def main():
     stall_epochs = 0
     resolved_output = args.output_dir if os.path.isabs(args.output_dir) else os.path.join(BASE_DIR, args.output_dir)
     os.makedirs(resolved_output, exist_ok=True)
+
+    # Ripresa opzionale da checkpoint precedente
+    checkpoint_file = os.path.join(resolved_output, "formulas.json")
+    if args.resume and os.path.exists(checkpoint_file):
+        print(f"📥 Ripresa attiva: caricamento archivio precedente da {checkpoint_file}...", flush=True)
+        try:
+            with open(checkpoint_file) as fp:
+                saved = json.load(fp)
+            from compare_datasets import spot_to_nested
+            batch_sigs = []
+            for f, size in saved:
+                if f not in seen_formulas:
+                    seen_formulas.add(f)
+                    accepted_formulas.append((f, size))
+                    nested = spot_to_nested(f)
+                    sig = signature(nested, vals, valid)
+                    batch_sigs.append(sig)
+            if batch_sigs:
+                archive_sigs = np.vstack(batch_sigs)
+            print(f"✅ Caricate con successo {len(accepted_formulas)} formule nell'archivio globale!", flush=True)
+        except Exception as e:
+            print(f"⚠️ Errore nel caricamento del checkpoint: {e}. Si riparte da zero.", flush=True)
 
     with executor:
         for epoch in range(1, args.max_epochs + 1):

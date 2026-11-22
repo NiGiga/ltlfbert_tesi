@@ -17,5 +17,6 @@ data/dataset_5k
 data/dataset_10k
 data_gp
 run_hpc_pipeline.slurm
+run_compare.slurm
 setup_demetra_env.sh
 *.csv
