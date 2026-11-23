@@ -14,6 +14,7 @@ Key Enhancements over the naive randltl generator:
 """
 
 import argparse
+import concurrent.futures
 import json
 import math
 import os
@@ -549,6 +550,49 @@ def build_example_multi(
     }
 
 
+def _worker_multi(args):
+    formula, bucket, seed, traces_per_formula, max_attempts, min_len, max_len, props = args
+    rng = random.Random(seed)
+    return formula, build_example_multi(
+        formula=formula,
+        bucket=bucket,
+        rng=rng,
+        traces_per_formula=traces_per_formula,
+        max_attempts=max_attempts,
+        min_len=min_len,
+        max_len=max_len,
+        props=props,
+    )
+
+
+def _worker_single(args):
+    formula, bucket, seed, target_label, max_attempts, min_len, max_len, props = args
+    rng = random.Random(seed)
+    return formula, build_example_single(
+        formula=formula,
+        bucket=bucket,
+        rng=rng,
+        target_label=target_label,
+        max_attempts=max_attempts,
+        min_len=min_len,
+        max_len=max_len,
+        props=props,
+    )
+
+
+def get_executor(n_workers=None):
+    if n_workers is None:
+        n_workers = os.cpu_count() or 4
+    try:
+        ex = concurrent.futures.ProcessPoolExecutor(max_workers=n_workers)
+        fut = ex.submit(int, 42)
+        fut.result(timeout=2)
+        return ex, f"ProcessPoolExecutor ({n_workers} CPU cores)"
+    except Exception:
+        ex = concurrent.futures.ThreadPoolExecutor(max_workers=n_workers)
+        return ex, f"ThreadPoolExecutor ({n_workers} workers)"
+
+
 # ---------------------------------------------------------------------
 # Validation & Output
 # ---------------------------------------------------------------------
@@ -659,6 +703,7 @@ def generate_dataset(
     max_temporal_depth=4,
     max_attempts=500,
     overwrite=False,
+    n_workers=None,
 ):
     validate_parameters(
         n_formulas=n_formulas,
@@ -717,52 +762,47 @@ def generate_dataset(
     sampling_attempts = 0
     total_oracle_checks = 0
 
-    for name in SPLIT_NAMES:
-        formula_list = formula_splits[name]
-        target_labels = assign_target_labels(len(formula_list), label_rng) if traces_per_formula == 1 else None
+    executor, exec_mode = get_executor(n_workers=n_workers)
+    print(f"[sampling] Parallel trace sampling active: {exec_mode}", flush=True)
 
-        rows = []
-        failures = Counter()
+    with executor:
+        for name in SPLIT_NAMES:
+            formula_list = formula_splits[name]
+            target_labels = assign_target_labels(len(formula_list), label_rng) if traces_per_formula == 1 else None
 
-        for index, formula in enumerate(formula_list, start=1):
-            target_label = target_labels[index - 1] if target_labels else 1
-            if traces_per_formula == 1:
-                batch_rows, status = build_example_single(
-                    formula=formula,
-                    bucket=formula_to_bucket[formula],
-                    rng=trace_rng,
-                    target_label=target_label,
-                    max_attempts=max_attempts,
-                    min_len=min_len,
-                    max_len=max_len,
-                )
-            else:
-                batch_rows, status = build_example_multi(
-                    formula=formula,
-                    bucket=formula_to_bucket[formula],
-                    rng=trace_rng,
-                    traces_per_formula=traces_per_formula,
-                    max_attempts=max_attempts,
-                    min_len=min_len,
-                    max_len=max_len,
-                )
+            tasks = []
+            for index, formula in enumerate(formula_list, start=1):
+                task_seed = trace_rng.randint(0, 10**9)
+                if traces_per_formula == 1:
+                    target_label = target_labels[index - 1] if target_labels else 1
+                    tasks.append((formula, formula_to_bucket[formula], task_seed, target_label, max_attempts, min_len, max_len, PROPS))
+                else:
+                    tasks.append((formula, formula_to_bucket[formula], task_seed, traces_per_formula, max_attempts, min_len, max_len, PROPS))
 
-            sampling_attempts += status["attempts"]
-            total_oracle_checks += status["oracle_checks"]
+            worker_fn = _worker_single if traces_per_formula == 1 else _worker_multi
 
-            if batch_rows is None:
-                failures[status["reason"]] += 1
-                skipped_formulas.append({"formula": formula, "split": name, **status})
-            else:
-                rows.extend(batch_rows)
+            rows = []
+            failures = Counter()
 
-            if index % 200 == 0 or index == len(formula_list):
-                print(f"[sampling] {name}: {index}/{len(formula_list)} processed | rows={len(rows)}", flush=True)
+            for index, (formula, (batch_rows, status)) in enumerate(
+                executor.map(worker_fn, tasks, chunksize=50), start=1
+            ):
+                sampling_attempts += status["attempts"]
+                total_oracle_checks += status["oracle_checks"]
 
-        shuffle_rng.shuffle(rows)
-        datasets[name] = rows
-        positives = sum(row["label"] for row in rows)
-        negatives = len(rows) - positives
+                if batch_rows is None:
+                    failures[status["reason"]] += 1
+                    skipped_formulas.append({"formula": formula, "split": name, **status})
+                else:
+                    rows.extend(batch_rows)
+
+                if index % 500 == 0 or index == len(formula_list):
+                    print(f"[sampling] {name}: {index}/{len(formula_list)} processed | rows={len(rows)}", flush=True)
+
+            shuffle_rng.shuffle(rows)
+            datasets[name] = rows
+            positives = sum(row["label"] for row in rows)
+            negatives = len(rows) - positives
 
         split_stats[name] = {
             "candidate_formulas": len(formula_list),
@@ -842,6 +882,7 @@ def main():
     parser.add_argument("--min-temporal-depth", type=int, default=2, help="Minimum temporal operator depth.")
     parser.add_argument("--max-temporal-depth", type=int, default=4, help="Maximum temporal operator depth.")
     parser.add_argument("--max-attempts", type=int, default=500)
+    parser.add_argument("--n-workers", type=int, default=None, help="Number of worker processes (default: all CPUs).")
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--test-only", action="store_true")
 
@@ -866,6 +907,7 @@ def main():
         max_temporal_depth=args.max_temporal_depth,
         max_attempts=args.max_attempts,
         overwrite=args.overwrite,
+        n_workers=args.n_workers,
     )
 
 

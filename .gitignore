@@ -16,7 +16,14 @@ data/dataset
 data/dataset_5k
 data/dataset_10k
 data_gp
+data_gp_island
+data_test_island
 run_hpc_pipeline.slurm
 run_compare.slurm
+run_randltl.slurm
 setup_demetra_env.sh
 *.csv
+slurm_randltl_131975.err
+slurm_randltl_131975.out
+slurm_randltl_131997.err
+slurm_randltl_131997.out
