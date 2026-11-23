@@ -1,5 +1,4 @@
 """
-# TODO: usare `#` per don't care symbols
 GP (DEAP) per generare formule LTLf il più possibile "ortogonali" tra loro.
 
 Ortogonale = semanticamente diverse, misurato come basso overlap dei
@@ -303,7 +302,7 @@ def run_round(tb, ev, pop_size, n_gen, cxpb, mutpb, k_add, sim_thr, seen):
 
 
 # ----------------------------------------------------------------------
-# 7. Dataset (riusa le funzioni del tuo script originale)
+# 7. Dataset (riusa le funzioni dello script originale)
 # ----------------------------------------------------------------------
 def sample_traces_fast(node, n_pos, n_neg, rng, min_len=MIN_LEN, max_len=MAX_LEN, batch_size=256, max_batches=20):
     """Campionamento ultra-veloce di tracce pos/neg usando la semantica vettorizzata sem()."""
@@ -370,7 +369,7 @@ def build_dataset(formulas, output_dir, traces_per_formula, seed, min_len=MIN_LE
 
 
 def verify_against_spot(formulas, vals, valid, n_check=100):
-    """Controllo: il mio evaluator concorda con il DFA Spot del tuo script?"""
+    """Controllo: l'evaluator concorda con il DFA Spot dell'altro script?"""
     try:
         from generate_dataset import accepts_trace, build_dfa
     except ImportError:

@@ -4,7 +4,7 @@
 gp_island.py - Algoritmo Genetico a Isole per Formule LTLf Ortogonali
 ===============================================================================
 
-Questo script implementa un'architettura ad Isole (Island Model / Coarse-Grained
+Questo script implementa un'architettura a Isole (Island Model / Coarse-Grained
 Parallelism) per evolvere formule LTLf massimamente ortogonali tra loro.
 
 Perché questa architettura?
