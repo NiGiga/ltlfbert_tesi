@@ -12,10 +12,8 @@ __pycache__/
 *.pt
 *.bin
 *.safetensors
-data/dataset/
-data/dataset_5k/
-data/dataset_10k/
 data/data_gp_island/
+data/dataset/generation_report.json
 *.csv
 
 # File di log ed errori generati da Slurm su HPC
