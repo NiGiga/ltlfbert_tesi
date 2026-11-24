@@ -34,6 +34,7 @@ import random
 import sys
 import time
 from collections import Counter
+from multiprocessing import shared_memory
 from pathlib import Path
 
 # Assicura che la root del repository, src e gp/ siano sempre nel PYTHONPATH
@@ -57,10 +58,41 @@ from gp_ltlf import (
     sample_traces_fast,
     sem,
     signature,
-    similarity,
     to_nested,
     to_spot_str,
 )
+
+
+# -----------------------------------------------------------------------------
+# 0. Normalizzazione e Similarità Vettorizzata BLAS (float32)
+# -----------------------------------------------------------------------------
+def normalize_signature(sig):
+    """Converte una firma booleana in float32 centrato (media 0) a norma L2 unitaria.
+
+    In presenza di vettori degeneri costanti (tutti True o tutti False, norma == 0),
+    restituisce un vettore nullo in float32.
+    """
+    v = np.asarray(sig, dtype=np.float32)
+    v = v - v.mean()
+    norm = float(np.linalg.norm(v))
+    if norm < 1e-12:
+        return np.zeros_like(v, dtype=np.float32)
+    return (v / np.float32(norm)).astype(np.float32, copy=False)
+
+
+def fast_similarity(sig_norm, archive_norm, count=None):
+    """Calcola la massima correlazione assoluta |phi| tramite prodotto matriciale BLAS.
+
+    Restituisce 0.0 se l'archivio è vuoto (count == 0).
+    Se sig_norm è il vettore nullo (formula costante/degenere), restituisce 1.0
+    per evitare che vettori costanti ottengano prodotto scalare nullo.
+    """
+    n = archive_norm.shape[0] if count is None else count
+    if n <= 0:
+        return 0.0
+    if not np.any(sig_norm):
+        return 1.0
+    return float(np.abs(archive_norm[:n] @ sig_norm).max())
 
 # -----------------------------------------------------------------------------
 # 1. Definizione delle Nicchie Semantiche
@@ -116,15 +148,16 @@ if not hasattr(creator, "Individual"):
 # -----------------------------------------------------------------------------
 class IslandEvaluator:
     """Valuta gli individui su una specifica isola, combinando:
-    1. Ortogonalità rispetto all'archivio globale (massimizzare distanza).
+    1. Ortogonalità rispetto all'archivio globale (massimizzare distanza via BLAS).
     2. Range di soddisfacibilità proprio della nicchia.
     3. Premialità per gli operatori caratteristici dell'isola.
     4. Parsimonia sulla dimensione dell'albero per prevenire il bloat.
     """
-    def __init__(self, vals, valid, archive, niche_cfg, size_penalty=0.003):
+    def __init__(self, vals, valid, archive_view, archive_count, niche_cfg, size_penalty=0.003):
         self.vals = vals
         self.valid = valid
-        self.archive = archive  # matrice booleana (K, T) delle formule già accettate
+        self.archive_view = archive_view  # vista float32 (K, T) in SharedMemory
+        self.archive_count = archive_count
         self.cfg = niche_cfg
         self.size_penalty = size_penalty
         self.cache = {}
@@ -136,12 +169,15 @@ class IslandEvaluator:
             # Protezione memoria: la cache locale dell'isola non supera mai 10.000 formule
             if len(self.cache) >= 10000:
                 self.cache.clear()
-            self.cache[s] = signature(nested, self.vals, self.valid)
-        return s, self.cache[s]
+            sig = signature(nested, self.vals, self.valid)
+            rate = float(sig.mean())
+            sig_norm = normalize_signature(sig)
+            self.cache[s] = (nested, rate, sig_norm)
+        nested, rate, sig_norm = self.cache[s]
+        return s, nested, rate, sig_norm
 
     def __call__(self, ind):
-        s, sig = self.sig_of(ind)
-        rate = sig.mean()
+        _, _, rate, sig_norm = self.sig_of(ind)
 
         # Penalità di soddisfacibilità specifica della nicchia
         pen = 0.0
@@ -157,8 +193,12 @@ class IslandEvaluator:
             if op in tree_str:
                 bonus += 0.04
 
-        # Penalità di similarità rispetto all'archivio globale
-        sim = similarity(sig, self.archive) if self.archive.size > 0 else 0.0
+        # Penalità di similarità rispetto all'archivio globale (float32 BLAS)
+        if not np.any(sig_norm):
+            # Caso degenere (vettore costante tutti True o tutti False)
+            sim = 1.0
+        else:
+            sim = fast_similarity(sig_norm, self.archive_view, self.archive_count)
 
         # Fitness totale: vogliamo minimizzare similarità, penalità e dimensione
         fitness = -sim - pen + bonus - (self.size_penalty * len(ind))
@@ -168,93 +208,112 @@ class IslandEvaluator:
 # -----------------------------------------------------------------------------
 # 4. Evoluzione di una Singola Isola (Funzione eseguita in parallelo)
 # -----------------------------------------------------------------------------
-def run_island_epoch(island_id, serialized_pop, archive, vals, valid, n_gen,
-                     pop_size, max_height, seed):
+def run_island_epoch(island_id, serialized_pop, shm_name, archive_shape, archive_count,
+                     vals, valid, n_gen, pop_size, max_height, seed):
     """Esegue un'epoca di evoluzione su una singola isola (core CPU).
-    
-    Riceve la popolazione serializzata (per compatibilità multiprocessing pulita),
-    svolge n_gen generazioni, seleziona i candidati migliori da proporre
-    all'archivio globale, e restituisce la nuova popolazione pronta per la migrazione.
+
+    Aggancia in sola lettura il blocco SharedMemory dell'archivio globale (zero copie IPC),
+    svolge n_gen generazioni, estrae i candidati migliori per l'archivio globale,
+    ordina la popolazione per fitness decrescente e la serializza per la migrazione.
     """
     random.seed(seed)
-    np_rng = np.random.default_rng(seed)
 
     niche_cfg = NICHES[island_id % len(NICHES)]
     pset = build_shared_pset()
 
-    tb = base.Toolbox()
-    tb.register("expr", gp.genHalfAndHalf, pset=pset, min_=1, max_=4)
-    tb.register("individual", tools.initIterate, creator.Individual, tb.expr)
-    tb.register("population", tools.initRepeat, list, tb.individual)
-    tb.register("select", tools.selTournament, tournsize=3)
-    tb.register("mate", gp.cxOnePoint)
-    tb.register("expr_mut", gp.genFull, min_=0, max_=2)
-    tb.register("mutate", gp.mutUniform, expr=tb.expr_mut, pset=pset)
+    shm = shared_memory.SharedMemory(name=shm_name)
+    full_archive = None
+    archive_view = None
+    evaluator = None
+    tb = None
 
-    # Limite di altezza per evitare alberi spropositati
-    for op_name in ("mate", "mutate"):
-        tb.decorate(op_name, gp.staticLimit(key=lambda ind: ind.height, max_value=max_height))
+    try:
+        full_archive = np.ndarray(archive_shape, dtype=np.float32, buffer=shm.buf)
+        full_archive.setflags(write=False)
+        archive_view = full_archive[:archive_count]
 
-    evaluator = IslandEvaluator(vals, valid, archive, niche_cfg)
-    tb.register("evaluate", evaluator)
+        tb = base.Toolbox()
+        tb.register("expr", gp.genHalfAndHalf, pset=pset, min_=1, max_=4)
+        tb.register("individual", tools.initIterate, creator.Individual, tb.expr)
+        tb.register("population", tools.initRepeat, list, tb.individual)
+        tb.register("select", tools.selTournament, tournsize=3)
+        tb.register("mate", gp.cxOnePoint)
+        tb.register("expr_mut", gp.genFull, min_=0, max_=2)
+        tb.register("mutate", gp.mutUniform, expr=tb.expr_mut, pset=pset)
 
-    # Ricostruiamo o inizializziamo la popolazione
-    if serialized_pop:
-        pop = []
-        for s in serialized_pop:
-            try:
-                # Ricrea l'albero DEAP dalla stringa serializzata
-                ind = creator.Individual.from_string(s, pset)
-            except Exception:
-                ind = tb.individual()
-            pop.append(ind)
-        # Se mancano individui, riempiamo fino a pop_size
-        while len(pop) < pop_size:
-            pop.append(tb.individual())
-    else:
-        pop = tb.population(n=pop_size)
+        # Limite di altezza per evitare alberi spropositati
+        for op_name in ("mate", "mutate"):
+            tb.decorate(op_name, gp.staticLimit(key=lambda ind: ind.height, max_value=max_height))
 
-    # Valutiamo gli individui iniziali privi di fitness valida
-    for ind in pop:
-        if not ind.fitness.valid:
-            ind.fitness.values = tb.evaluate(ind)
+        evaluator = IslandEvaluator(vals, valid, archive_view, archive_count, niche_cfg)
+        tb.register("evaluate", evaluator)
 
-    # Ciclo generazionale locale dell'isola
-    cxpb, mutpb = 0.7, 0.3
-    for _ in range(n_gen):
-        offspring = list(map(tb.clone, tb.select(pop, len(pop))))
-        for a, b in zip(offspring[::2], offspring[1::2]):
-            if random.random() < cxpb:
-                tb.mate(a, b)
-                del a.fitness.values, b.fitness.values
-        for m in offspring:
-            if random.random() < mutpb:
-                tb.mutate(m)
-                del m.fitness.values
-        for ind in offspring:
+        # Ricostruiamo o inizializziamo la popolazione
+        if serialized_pop:
+            pop = []
+            for s in serialized_pop:
+                try:
+                    # Ricrea l'albero DEAP dalla stringa serializzata
+                    ind = creator.Individual.from_string(s, pset)
+                except Exception:
+                    ind = tb.individual()
+                pop.append(ind)
+            # Se mancano individui, riempiamo fino a pop_size
+            while len(pop) < pop_size:
+                pop.append(tb.individual())
+        else:
+            pop = tb.population(n=pop_size)
+
+        # Valutiamo gli individui iniziali privi di fitness valida
+        for ind in pop:
             if not ind.fitness.valid:
                 ind.fitness.values = tb.evaluate(ind)
 
-        # Elitismo locale: i 3 migliori sopravvivono direttamente
-        pop = tools.selBest(pop, 3) + offspring[:-3]
+        # Ciclo generazionale locale dell'isola
+        cxpb, mutpb = 0.7, 0.3
+        for _ in range(n_gen):
+            offspring = list(map(tb.clone, tb.select(pop, len(pop))))
+            for a, b in zip(offspring[::2], offspring[1::2]):
+                if random.random() < cxpb:
+                    tb.mate(a, b)
+                    del a.fitness.values, b.fitness.values
+            for m in offspring:
+                if random.random() < mutpb:
+                    tb.mutate(m)
+                    del m.fitness.values
+            for ind in offspring:
+                if not ind.fitness.valid:
+                    ind.fitness.values = tb.evaluate(ind)
 
-    # Estraiamo i candidati dell'isola: individui validi per l'archivio globale
-    candidates = []
-    seen_local = set()
-    for ind in tools.selBest(pop, min(len(pop), 15)):
-        s, sig = evaluator.sig_of(ind)
-        if s in seen_local:
-            continue
-        rate = sig.mean()
-        # Solo formule che non siano trivialmente sempre vere o sempre false
-        if 0.05 <= rate <= 0.95:
-            candidates.append((s, len(ind), sig))
-            seen_local.add(s)
+            # Elitismo locale: i 3 migliori sopravvivono direttamente
+            pop = tools.selBest(pop, 3) + offspring[:-3]
 
-    # Serializziamo la popolazione finale in stringhe per la restituzione al Master
-    final_pop_strings = [str(ind) for ind in pop]
+        # Ordiniamo l'intera popolazione per fitness decrescente:
+        # garantisce che apply_migration rimpiazzi effettivamente i peggiori in coda
+        pop = tools.selBest(pop, len(pop))
 
-    return island_id, final_pop_strings, candidates
+        # Estraiamo i candidati dell'isola: individui validi per l'archivio globale
+        candidates = []
+        seen_local = set()
+        for ind in pop[:min(len(pop), 15)]:
+            s, nested, rate, sig_norm = evaluator.sig_of(ind)
+            if s in seen_local:
+                continue
+            # Solo formule non banali (né sempre vere né sempre false)
+            if 0.05 <= rate <= 0.95 and np.any(sig_norm):
+                candidates.append((s, len(ind), nested, sig_norm))
+                seen_local.add(s)
+
+        # Serializziamo la popolazione finale ordinata per la restituzione al Master
+        final_pop_strings = [str(ind) for ind in pop]
+
+        return island_id, final_pop_strings, candidates
+    finally:
+        # Rilascia esplicitamente tutti i puntatori esportati al buffer prima di chiudere shm
+        if evaluator is not None:
+            evaluator.archive_view = None
+        del tb, evaluator, archive_view, full_archive
+        shm.close()
 
 
 # -----------------------------------------------------------------------------
@@ -328,8 +387,10 @@ def main():
                         help="Epoche consecutive senza nuove formule prima dello stop per saturazione (default: 20)")
     parser.add_argument("--sim-thr", type=float, default=0.6,
                         help="Soglia massima di similarità per entrare nell'archivio (default: 0.6)")
-    parser.add_argument("--pool-size", type=int, default=512,
-                        help="Numero di tracce nel pool di valutazione delle firme (default: 512)")
+    parser.add_argument("--pool-size", type=int, default=1024,
+                        help="Numero di tracce nel pool A di evoluzione (default: 1024)")
+    parser.add_argument("--val-pool-size", type=int, default=2048,
+                        help="Numero di tracce nel pool B hold-out di validazione nel Master (default: 2048)")
     parser.add_argument("--min-len", type=int, default=MIN_LEN,
                         help="Lunghezza minima delle tracce (default: 3)")
     parser.add_argument("--max-len", type=int, default=MAX_LEN,
@@ -344,12 +405,17 @@ def main():
                         help="Cartella di destinazione dei dataset e delle formule (default: data/data_gp_island)")
     args = parser.parse_args()
 
-    # Inizializzazione pool di tracce di riferimento
+    # Inizializzazione pool di tracce di riferimento (Pool A condiviso con le isole)
     rng = np.random.default_rng(args.seed)
+    # Pool B indipendente hold-out (visto solo dal Master in fase di Harvesting)
+    rng_val = np.random.default_rng(args.seed + 99999)
+
     print("=" * 75)
     print("🚀 AVVIO GP AD ISOLE: Generazione Formule LTLf Ortogonali")
     print(f"  • Isole parallele (CPU Core): {args.n_islands}")
     print(f"  • Popolazione totale:         {args.n_islands * args.pop_per_island} ({args.pop_per_island} per isola)")
+    print(f"  • Pool A (Evoluzione):        {args.pool_size} tracce (SharedMemory float32)")
+    print(f"  • Pool B (Hold-Out Master):   {args.val_pool_size} tracce")
     print(f"  • Orizzonte temporale tracce: min_len={args.min_len}, max_len={args.max_len}")
     print(f"  • Soglia similarità phi:      <= {args.sim_thr}")
     print(f"  • Obiettivo formule:          {args.n_formulas}")
@@ -358,119 +424,180 @@ def main():
     print("=" * 75)
 
     vals, valid = make_trace_pool(args.pool_size, rng, min_len=args.min_len, max_len=args.max_len)
+    vals_val, valid_val = make_trace_pool(args.val_pool_size, rng_val, min_len=args.min_len, max_len=args.max_len)
 
     # Strutture dati del Master
-    archive_sigs = np.zeros((0, args.pool_size), dtype=bool)
+    archive_shape = (args.n_formulas, args.pool_size)
+    nbytes_a = args.n_formulas * args.pool_size * np.dtype(np.float32).itemsize
+    archive_b = np.zeros((args.n_formulas, args.val_pool_size), dtype=np.float32)
+
     accepted_formulas = []  # Lista di tuple: (stringa_formula, dimensione_albero)
     seen_formulas = set()
     populations = [[] for _ in range(args.n_islands)]
+    n_accepted = 0
 
     t0 = time.perf_counter()
     stall_epochs = 0
     resolved_output = args.output_dir if os.path.isabs(args.output_dir) else os.path.join(BASE_DIR, args.output_dir)
     os.makedirs(resolved_output, exist_ok=True)
-
-    # Ripresa opzionale da checkpoint precedente
     checkpoint_file = os.path.join(resolved_output, "formulas.json")
-    if args.resume and os.path.exists(checkpoint_file):
-        print(f"📥 Ripresa attiva: caricamento archivio precedente da {checkpoint_file}...", flush=True)
-        try:
-            with open(checkpoint_file) as fp:
-                saved = json.load(fp)
-            from compare_datasets import spot_to_nested
-            batch_sigs = []
-            for f, size in saved:
-                if f not in seen_formulas:
-                    seen_formulas.add(f)
-                    accepted_formulas.append((f, size))
-                    nested = spot_to_nested(f)
-                    sig = signature(nested, vals, valid)
-                    batch_sigs.append(sig)
-            if batch_sigs:
-                archive_sigs = np.vstack(batch_sigs)
-            print(f"✅ Caricate con successo {len(accepted_formulas)} formule nell'archivio globale!", flush=True)
-        except Exception as e:
-            print(f"⚠️ Errore nel caricamento del checkpoint: {e}. Si riparte da zero.", flush=True)
 
-    with executor:
-        for epoch in range(1, args.max_epochs + 1):
-            t_epoch_start = time.perf_counter()
+    shm = None
+    archive_a = None
+    try:
+        # Pre-allocazione unica in SharedMemory per Pool A (zero copie IPC)
+        shm = shared_memory.SharedMemory(create=True, size=nbytes_a)
+        archive_a = np.ndarray(archive_shape, dtype=np.float32, buffer=shm.buf)
+        archive_a.fill(0.0)
 
-            # Lanciamo tutte le isole in parallelo
-            futures = []
-            for island_id in range(args.n_islands):
-                f = executor.submit(
-                    run_island_epoch,
-                    island_id=island_id,
-                    serialized_pop=populations[island_id],
-                    archive=archive_sigs,
-                    vals=vals,
-                    valid=valid,
-                    n_gen=args.gen_per_epoch,
-                    pop_size=args.pop_per_island,
-                    max_height=args.max_height,
-                    seed=args.seed + (epoch * 100) + island_id,
-                )
-                futures.append(f)
+        # Ripresa opzionale da checkpoint precedente
+        if args.resume and os.path.exists(checkpoint_file):
+            print(f"📥 Ripresa attiva: caricamento archivio precedente da {checkpoint_file}...", flush=True)
+            try:
+                with open(checkpoint_file) as fp:
+                    saved = json.load(fp)
+                from compare_datasets import spot_to_nested
+                for f, size in saved:
+                    if n_accepted >= args.n_formulas:
+                        break
+                    if f not in seen_formulas:
+                        nested = spot_to_nested(f)
+                        sig_a = signature(nested, vals, valid)
+                        sig_b = signature(nested, vals_val, valid_val)
+                        archive_a[n_accepted] = normalize_signature(sig_a)
+                        archive_b[n_accepted] = normalize_signature(sig_b)
+                        n_accepted += 1
+                        seen_formulas.add(f)
+                        accepted_formulas.append((f, size))
+                print(f"✅ Caricate con successo {n_accepted} formule nell'archivio globale (Pool A & B)!", flush=True)
+            except Exception as e:
+                print(f"⚠️ Errore nel caricamento del checkpoint: {e}. Si riparte da zero.", flush=True)
+                n_accepted = 0
+                accepted_formulas.clear()
+                seen_formulas.clear()
+                archive_a.fill(0.0)
+                archive_b.fill(0.0)
 
-            # Raccogliamo i risultati al termine dell'epoca
-            epoch_candidates = []
-            for f in concurrent.futures.as_completed(futures):
-                island_id, new_pop, candidates = f.result()
-                populations[island_id] = new_pop
-                epoch_candidates.extend(candidates)
+        with executor:
+            for epoch in range(1, args.max_epochs + 1):
+                if n_accepted >= args.n_formulas:
+                    print(f"\n🎯 Obiettivo già raggiunto dal checkpoint: {n_accepted} formule!", flush=True)
+                    break
 
-            # -----------------------------------------------------------------
-            # Fase di Raccolta (Harvesting) sull'Archivio Globale
-            # -----------------------------------------------------------------
-            newly_added = 0
-            # Ordiniamo i candidati per dimensione (preferenza per formule compatte)
-            epoch_candidates.sort(key=lambda x: x[1])
+                t_epoch_start = time.perf_counter()
 
-            for s, size, sig in epoch_candidates:
-                if s in seen_formulas:
-                    continue
-                # Controllo di ortogonalità contro l'archivio globale
-                if similarity(sig, archive_sigs) <= args.sim_thr:
-                    archive_sigs = np.vstack([archive_sigs, sig[None, :]])
+                # Lanciamo tutte le isole in parallelo passando solo i metadati SharedMemory
+                futures = []
+                for island_id in range(args.n_islands):
+                    f = executor.submit(
+                        run_island_epoch,
+                        island_id=island_id,
+                        serialized_pop=populations[island_id],
+                        shm_name=shm.name,
+                        archive_shape=archive_shape,
+                        archive_count=n_accepted,
+                        vals=vals,
+                        valid=valid,
+                        n_gen=args.gen_per_epoch,
+                        pop_size=args.pop_per_island,
+                        max_height=args.max_height,
+                        seed=args.seed + (epoch * 100) + island_id,
+                    )
+                    futures.append(f)
+
+                # Raccogliamo i risultati al termine dell'epoca
+                epoch_candidates = []
+                for f in concurrent.futures.as_completed(futures):
+                    island_id, new_pop, candidates = f.result()
+                    populations[island_id] = new_pop
+                    epoch_candidates.extend(candidates)
+
+                # -----------------------------------------------------------------
+                # Fase di Raccolta (Harvesting) con Doppio Filtro (Pool A + Pool B)
+                # -----------------------------------------------------------------
+                newly_added = 0
+                rej_a = 0
+                rej_b = 0
+                # Ordiniamo i candidati per dimensione (preferenza per formule compatte)
+                epoch_candidates.sort(key=lambda x: x[1])
+
+                for s, size, nested, sig_norm_a in epoch_candidates:
+                    if n_accepted >= args.n_formulas:
+                        break
+                    if s in seen_formulas:
+                        continue
+                    if not np.any(sig_norm_a):
+                        continue
+
+                    # 1. Controllo ortogonalità sul Pool A
+                    if fast_similarity(sig_norm_a, archive_a, n_accepted) > args.sim_thr:
+                        rej_a += 1
+                        continue
+
+                    # 2. Controllo ortogonalità sul Pool B (Hold-Out indipendente nel Master)
+                    sig_b = signature(nested, vals_val, valid_val)
+                    sig_norm_b = normalize_signature(sig_b)
+                    if not np.any(sig_norm_b) or fast_similarity(sig_norm_b, archive_b, n_accepted) > args.sim_thr:
+                        rej_b += 1
+                        continue
+
+                    # 3. Inserimento diretto negli archivi pre-allocati (zero vstack)
+                    archive_a[n_accepted] = sig_norm_a
+                    archive_b[n_accepted] = sig_norm_b
+                    n_accepted += 1
                     seen_formulas.add(s)
                     accepted_formulas.append((s, size))
                     newly_added += 1
-                    if len(accepted_formulas) >= args.n_formulas:
+                    if n_accepted >= args.n_formulas:
                         break
 
-            # -----------------------------------------------------------------
-            # Fase di Migrazione (Topologia Bipartita)
-            # -----------------------------------------------------------------
-            populations = apply_migration(populations, epoch)
+                # -----------------------------------------------------------------
+                # Fase di Migrazione (Topologia Bipartita)
+                # -----------------------------------------------------------------
+                populations = apply_migration(populations, epoch)
 
-            # Gestione stallo
-            if newly_added > 0:
-                stall_epochs = 0
-            else:
-                stall_epochs += 1
+                # Gestione stallo
+                if newly_added > 0:
+                    stall_epochs = 0
+                else:
+                    stall_epochs += 1
 
-            elapsed = time.perf_counter() - t0
-            t_epoch = time.perf_counter() - t_epoch_start
-            print(f"[Epoca {epoch:3d}/{args.max_epochs}] "
-                  f"Formule: {len(accepted_formulas):5d}/{args.n_formulas} "
-                  f"(+{newly_added:2d}) | "
-                  f"Stall: {stall_epochs:2d}/{args.max_stall_epochs} | "
-                  f"Tempo epoca: {t_epoch:.1f}s | Tot: {elapsed:.0f}s",
-                  flush=True)
+                elapsed = time.perf_counter() - t0
+                t_epoch = time.perf_counter() - t_epoch_start
+                print(f"[Epoca {epoch:3d}/{args.max_epochs}] "
+                      f"Formule: {n_accepted:5d}/{args.n_formulas} "
+                      f"(+{newly_added:2d} | Rej A:{rej_a:3d} B:{rej_b:2d}) | "
+                      f"Stall: {stall_epochs:2d}/{args.max_stall_epochs} | "
+                      f"Tempo epoca: {t_epoch:.1f}s | Tot: {elapsed:.0f}s",
+                      flush=True)
 
-            # Checkpoint intermedio su disco ogni 10 epoche
-            if epoch % 10 == 0 or len(accepted_formulas) >= args.n_formulas:
-                with open(os.path.join(resolved_output, "formulas.json"), "w") as fp:
-                    json.dump(accepted_formulas, fp, indent=2)
+                # Checkpoint intermedio su disco ogni 10 epoche
+                if epoch % 10 == 0 or n_accepted >= args.n_formulas:
+                    with open(checkpoint_file, "w") as fp:
+                        json.dump(accepted_formulas, fp, indent=2)
 
-            # Condizioni di arresto
-            if len(accepted_formulas) >= args.n_formulas:
-                print(f"\n🎯 Obiettivo raggiunto: {len(accepted_formulas)} formule ortogonali trovate!")
-                break
-            if stall_epochs >= args.max_stall_epochs:
-                print(f"\n⚠️ Arresto per saturazione spazio: nessuna formula ortogonale trovata per {stall_epochs} epoche consecutive.")
-                break
+                # Condizioni di arresto
+                if n_accepted >= args.n_formulas:
+                    print(f"\n🎯 Obiettivo raggiunto: {n_accepted} formule ortogonali trovate!")
+                    break
+                if stall_epochs >= args.max_stall_epochs:
+                    print(f"\n⚠️ Arresto per saturazione spazio: nessuna formula ortogonale trovata per {stall_epochs} epoche consecutive.")
+                    break
+    finally:
+        # Chiusura e deallocazione garantita della SharedMemory anche su interrupt/errore
+        del archive_a
+        if shm is not None:
+            try:
+                shm.close()
+            except Exception:
+                pass
+            try:
+                shm.unlink()
+            except FileNotFoundError:
+                pass
+
+    # Libera la RAM dell'archivio B prima del campionamento finale delle tracce
+    del archive_b
 
     # -------------------------------------------------------------------------
     # 7. Generazione Dataset Finale (train/val/test/ood)

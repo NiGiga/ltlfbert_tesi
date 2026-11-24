@@ -114,9 +114,11 @@ echo "STEP 2: Generating GP Island Dataset (${N_FORMULAS} formulas, max_len=${MA
 echo "Started at $(date)"
 echo "======================================================================"
 
-python3 src/gp/gp_island.py \
+OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 python3 src/gp/gp_island.py \
     --n-formulas "$N_FORMULAS" \
     --max-len "$MAX_LEN" \
+    --pool-size 1024 \
+    --val-pool-size 2048 \
     --output-dir "$DIR_GP" \
     --n-islands 8 \
     --max-epochs 2000 \
