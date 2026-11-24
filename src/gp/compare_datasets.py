@@ -15,10 +15,11 @@ import sys
 from collections import Counter
 import pickle
 
-# Assicura che la root del repository e gp siano sempre in sys.path
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Assicura che la root del repository, src e gp siano sempre in sys.path
 GP_DIR = os.path.dirname(os.path.abspath(__file__))
-for p in [BASE_DIR, GP_DIR]:
+SRC_DIR = os.path.dirname(GP_DIR)
+BASE_DIR = os.path.dirname(SRC_DIR)
+for p in [BASE_DIR, SRC_DIR, GP_DIR]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
@@ -135,7 +136,10 @@ def formula_signatures(formulas, vals, valid):
             try:
                 from generate_dataset import PROPS, build_ltlf_oracle, trace_to_spot_word
             except ImportError:
-                from data.generate_dataset import PROPS, build_ltlf_oracle, trace_to_spot_word
+                try:
+                    from src.data.generate_dataset import PROPS, build_ltlf_oracle, trace_to_spot_word
+                except ImportError:
+                    from data.generate_dataset import PROPS, build_ltlf_oracle, trace_to_spot_word
 
             if words is None:
                 words = []
@@ -268,9 +272,13 @@ def op_kl(opa, opb, eps=1e-9):
 
 # ----------------------------------------------------------------------
 def main():
+    default_a = "data/dataset"
+    default_b = "data/data_gp_island" if os.path.exists(os.path.join(BASE_DIR, "data/data_gp_island")) else "data/data_gp"
+    default_out = os.path.join(BASE_DIR, "report.json")
+
     ap = argparse.ArgumentParser()
-    ap.add_argument("--a", default="data/dataset", help="dir dataset A (randltl, default: data/dataset)")
-    ap.add_argument("--b", default="data_gp", help="dir dataset B (GP, default: data_gp)")
+    ap.add_argument("--a", default=default_a, help=f"dir dataset A (randltl, default: {default_a})")
+    ap.add_argument("--b", default=default_b, help=f"dir dataset B (GP, default: {default_b})")
     ap.add_argument("--run-gp", action="store_true",
                     help="lancia gp_ltlf.py per generare B")
     ap.add_argument("--gp-args", nargs=argparse.REMAINDER, default=[],
@@ -285,9 +293,8 @@ def main():
                     help="diverso dal seed del GP -> pool indipendente")
     ap.add_argument("--max-eval", type=int, default=2000,
                     help="numero massimo di formule campionate per le metriche semantiche (0 = tutte)")
-    default_out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "report.json")
     ap.add_argument("--out", default=default_out,
-                    help="path del file report JSON (default: gp/report.json)")
+                    help=f"path del file report JSON (default: {default_out})")
 
     args = ap.parse_args()
 

@@ -13,7 +13,15 @@ import importlib
 import inspect
 import json
 import os
+import sys
 from functools import reduce
+
+# Assicura che la root del repository e src/ siano in sys.path
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+for p in [REPO_ROOT, SRC_DIR]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 import numpy as np
 import spot
@@ -178,8 +186,18 @@ def pair_metrics(asts, rows, batch_sizes=(32, 256)):
 # ═════════════ Ricerca e chiamata delle funzioni di generazione ═════════════
 # per ogni modalità: moduli in cui cercare (il primo è quello "di casa")
 CANDIDATES = {
-    "randltl": ["data.generate_dataset_randltl", "data.generate_dataset"],
-    "gp":      ["data.generate_dataset", "data.ltlf_gp"],
+    "randltl": [
+        "src.data.generate_dataset",
+        "src.gp.generate_dataset_randltl",
+        "src.gp.generate_dataset",
+        "data.generate_dataset",
+    ],
+    "gp": [
+        "src.gp.gp_island",
+        "src.gp.gp_ltlf",
+        "src.data.generate_dataset",
+        "data.generate_dataset",
+    ],
 }
 
 

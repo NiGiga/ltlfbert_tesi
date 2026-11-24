@@ -19,9 +19,10 @@ import random
 import sys
 import time
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GP_DIR = os.path.dirname(os.path.abspath(__file__))
-for p in [BASE_DIR, GP_DIR]:
+SRC_DIR = os.path.dirname(GP_DIR)
+BASE_DIR = os.path.dirname(SRC_DIR)
+for p in [BASE_DIR, SRC_DIR, GP_DIR]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
@@ -329,9 +330,14 @@ def build_dataset(formulas, output_dir, traces_per_formula, seed, min_len=MIN_LE
         from generate_dataset import (build_dfa, sample_traces_for_formula,
                                       trace_to_str)
     except ImportError:
-        from data.generate_dataset import (build_ltlf_oracle as build_dfa,
-                                           sample_traces_for_formula,
-                                           trace_to_str)
+        try:
+            from src.data.generate_dataset import (build_ltlf_oracle as build_dfa,
+                                                   sample_traces_for_formula,
+                                                   trace_to_str)
+        except ImportError:
+            from data.generate_dataset import (build_ltlf_oracle as build_dfa,
+                                               sample_traces_for_formula,
+                                               trace_to_str)
     random.seed(seed)
     rng = np.random.default_rng(seed)
     os.makedirs(output_dir, exist_ok=True)
@@ -373,7 +379,10 @@ def verify_against_spot(formulas, vals, valid, n_check=100):
     try:
         from generate_dataset import accepts_trace, build_dfa
     except ImportError:
-        from data.generate_dataset import accepts_trace, build_ltlf_oracle as build_dfa
+        try:
+            from src.data.generate_dataset import accepts_trace, build_ltlf_oracle as build_dfa
+        except ImportError:
+            from data.generate_dataset import accepts_trace, build_ltlf_oracle as build_dfa
     bad = 0
     total_checks = 0
     for f, _ in formulas[:20]:
@@ -415,7 +424,7 @@ def main():
     ap.add_argument("--max-height", type=int, default=7,
                     help="altezza massima alberi GP (consigliato >= 7 per orizzonti lunghi)")
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--output-dir", type=str, default="data_gp")
+    ap.add_argument("--output-dir", type=str, default="data/data_gp")
     ap.add_argument("--verify", action="store_true")
     ap.add_argument("--slow-spot-sampler", action="store_true",
                     help="usa l'oracolo Spot invece di sem() per il campionamento finale")

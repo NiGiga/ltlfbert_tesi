@@ -8,22 +8,18 @@ __pycache__/
 *.pyc
 .idea/
 
-# Dataset e Modelli (Modifica i percorsi in base alla tua struttura)
+# Dataset e Modelli
 *.pt
 *.bin
 *.safetensors
-data/dataset
-data/dataset_5k
-data/dataset_10k
-data_gp
-data_gp_island
-data_test_island
-run_hpc_pipeline.slurm
-run_compare.slurm
-run_randltl.slurm
-setup_demetra_env.sh
+data/dataset/
+data/dataset_5k/
+data/dataset_10k/
+data/data_gp_island/
 *.csv
-slurm_randltl_131975.err
-slurm_randltl_131975.out
-slurm_randltl_131997.err
-slurm_randltl_131997.out
+
+# File di log ed errori generati da Slurm su HPC
+slurm/*.err
+slurm/*.out
+*.err
+*.out

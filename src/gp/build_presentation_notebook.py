@@ -133,10 +133,16 @@ import numpy as np
 
 # Ensure project root and gp/ directory are in sys.path
 cwd = os.path.abspath('')
-root_dir = os.path.dirname(cwd) if os.path.basename(cwd) == 'gp' else cwd
-gp_dir = os.path.join(root_dir, 'gp')
+if os.path.basename(cwd) == 'gp':
+    root_dir = os.path.dirname(os.path.dirname(cwd))
+elif os.path.basename(cwd) == 'src':
+    root_dir = os.path.dirname(cwd)
+else:
+    root_dir = cwd
+gp_dir = os.path.join(root_dir, 'src', 'gp')
+src_dir = os.path.join(root_dir, 'src')
 
-for p in [root_dir, gp_dir]:
+for p in [root_dir, src_dir, gp_dir]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
@@ -460,7 +466,11 @@ We developed [`gp/print_trees.py`](file:///home/gugutca/PycharmProjects/LTLfBERT
 Let us compare representative formulas and syntax trees from the **Baseline dataset** (`data/`) versus the **GP-evolved dataset** (`data_gp/`)."""
     cells.append(make_markdown_cell(md_sec5))
 
-    code_sec5 = """gp_formulas_path = os.path.join(root_dir, 'data_gp', 'formulas.json')
+    code_sec5 = """gp_candidates = [
+    os.path.join(root_dir, 'data', 'data_gp_island', 'formulas.json'),
+    os.path.join(root_dir, 'data', 'data_gp', 'formulas.json'),
+]
+gp_formulas_path = next((p for p in gp_candidates if os.path.exists(p)), gp_candidates[0])
 with open(gp_formulas_path, 'r') as fp:
     gp_formulas = json.load(fp)
 

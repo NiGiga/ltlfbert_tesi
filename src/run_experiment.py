@@ -11,8 +11,16 @@ Esegue in sequenza:
 import argparse
 import json
 import os
+import sys
 import torch, gc
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
+# Assicura che la root del repository e src/ siano in sys.path
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+for p in [REPO_ROOT, SRC_DIR]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 def main():
     p = argparse.ArgumentParser(description="LTLfBERT Experiment Runner")
@@ -55,7 +63,10 @@ def main():
         print(f"✅ Dataset trovato in '{DATA}'. Generazione saltata.")
     else:
         print(f"⏳ Generazione di {N_FORMULAS} formule...")
-        from data.generate_dataset import generate_dataset
+        try:
+            from src.data.generate_dataset import generate_dataset
+        except ImportError:
+            from data.generate_dataset import generate_dataset
         generate_dataset(n_formulas=N_FORMULAS, output_dir=DATA)
 
     # ── 2. Pre-training ──────────────────────────────────────────────────────

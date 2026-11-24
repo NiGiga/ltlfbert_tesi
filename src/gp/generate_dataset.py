@@ -661,6 +661,15 @@ def write_json(path, content):
         json.dump(content, fp, indent=2, ensure_ascii=False, allow_nan=False)
 
 
+def find_repo_root():
+    curr = Path(__file__).resolve().parent
+    while curr != curr.parent:
+        if (curr / ".git").exists() or (curr / "src").exists():
+            return curr
+        curr = curr.parent
+    return Path(__file__).resolve().parent.parent.parent
+
+
 def save_outputs(output, payloads, overwrite):
     output.mkdir(parents=True, exist_ok=True)
     if not overwrite:
@@ -720,12 +729,12 @@ def generate_dataset(
     if output_dir is not None:
         p = Path(output_dir).expanduser()
         if not p.is_absolute():
-            base_dir = Path(__file__).resolve().parent.parent
-            output = (base_dir / p).resolve() if (base_dir / p.parts[0]).exists() else p.resolve()
+            base_dir = find_repo_root()
+            output = (base_dir / p).resolve()
         else:
             output = p.resolve()
     else:
-        output = Path(__file__).resolve().parent.parent / "data" / "dataset"
+        output = find_repo_root() / "data" / "dataset"
 
     output_names = [*(f"{name}.json" for name in SPLIT_NAMES), "formula_splits.json", "generation_report.json"]
     if not overwrite:

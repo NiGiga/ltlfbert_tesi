@@ -36,10 +36,11 @@ import time
 from collections import Counter
 from pathlib import Path
 
-# Assicura che la root del repository e gp/ siano sempre nel PYTHONPATH
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Assicura che la root del repository, src e gp/ siano sempre nel PYTHONPATH
 GP_DIR = os.path.dirname(os.path.abspath(__file__))
-for p in [BASE_DIR, GP_DIR]:
+SRC_DIR = os.path.dirname(GP_DIR)
+BASE_DIR = os.path.dirname(SRC_DIR)
+for p in [BASE_DIR, SRC_DIR, GP_DIR]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
@@ -339,8 +340,8 @@ def main():
                         help="Tracce campionate per formula nel dataset finale (default: 4)")
     parser.add_argument("--seed", type=int, default=42,
                         help="Seed iniziale per la riproducibilità (default: 42)")
-    parser.add_argument("--output-dir", type=str, default="data_gp",
-                        help="Cartella di destinazione dei dataset e delle formule (default: data_gp)")
+    parser.add_argument("--output-dir", type=str, default="data/data_gp_island",
+                        help="Cartella di destinazione dei dataset e delle formule (default: data/data_gp_island)")
     args = parser.parse_args()
 
     # Inizializzazione pool di tracce di riferimento

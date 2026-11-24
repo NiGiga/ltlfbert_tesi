@@ -177,7 +177,7 @@ def main():
     parser.add_argument(
         "-f", "--file",
         type=str,
-        default="data_gp/formulas.json",
+        default="data/data_gp_island/formulas.json",
         help="Path to dataset JSON file (formulas.json, train.json, ood.json, etc.)"
     )
     parser.add_argument(
@@ -217,11 +217,21 @@ def main():
 
     target_file = args.file
     if not os.path.exists(target_file):
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        candidate = os.path.join(base_dir, target_file)
-        if os.path.exists(candidate):
-            target_file = candidate
-        else:
+        gp_dir = os.path.dirname(os.path.abspath(__file__))
+        repo_root = os.path.dirname(os.path.dirname(gp_dir))
+        candidates = [
+            os.path.join(repo_root, target_file),
+            os.path.join(repo_root, "data", target_file),
+            os.path.join(repo_root, "data/data_gp_island/formulas.json"),
+            os.path.join(repo_root, "data/data_gp/formulas.json"),
+        ]
+        found = False
+        for c in candidates:
+            if os.path.exists(c):
+                target_file = c
+                found = True
+                break
+        if not found:
             print(f"Error: File '{args.file}' not found.", file=sys.stderr)
             sys.exit(1)
 

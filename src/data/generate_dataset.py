@@ -665,6 +665,15 @@ def save_outputs(output, payloads, overwrite):
 # ---------------------------------------------------------------------
 # Dataset generation
 # ---------------------------------------------------------------------
+def find_repo_root():
+    curr = Path(__file__).resolve().parent
+    while curr != curr.parent:
+        if (curr / ".git").exists() or (curr / "src").exists():
+            return curr
+        curr = curr.parent
+    return Path(__file__).resolve().parent.parent.parent
+
+
 def generate_dataset(
     n_formulas=5000,
     traces_per_formula=1,
@@ -691,11 +700,15 @@ def generate_dataset(
         max_attempts=max_attempts,
     )
 
-    output = (
-        Path(output_dir).expanduser().resolve()
-        if output_dir is not None
-        else Path(__file__).resolve().parent / "dataset"
-    )
+    if output_dir is not None:
+        p = Path(output_dir).expanduser()
+        if not p.is_absolute():
+            base_dir = find_repo_root()
+            output = (base_dir / p).resolve()
+        else:
+            output = p.resolve()
+    else:
+        output = find_repo_root() / "data" / "dataset"
 
     output_names = [
         *(f"{name}.json" for name in SPLIT_NAMES),
