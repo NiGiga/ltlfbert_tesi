@@ -2,7 +2,8 @@
 venv/
 env/
 .env
-
+data/*
+slurm/*
 # Cache di Python e PyCharm
 __pycache__/
 *.pyc

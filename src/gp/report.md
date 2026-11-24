@@ -119,7 +119,7 @@ For a candidate individual $\text{ind}$ with signature $S(\text{ind}) \in \{0, 1
    If the archive is empty, $\text{sim} = 0$.
 
 2. **Satisfaction Skewness Penalty**:
-   To prevent the genetic search from cheating by generating tautologies ($S \equiv \mathbf{1}$) or contradictions ($S \equiv \mathbf{0}$) to achieve orthogonality, I implemented an asymmetric piecewise linear penalty based on the satisfaction rate $r = \frac{1}{T} \sum_{t=1}^T S(\text{ind})_t$:
+   To prevent the genetic search from cheating by generating tautologies ( $S \equiv \mathbf{1}$) or contradictions ( $S \equiv \mathbf{0}$) to achieve orthogonality, I implemented an asymmetric piecewise linear penalty based on the satisfaction rate $r = \frac{1}{T} \sum_{t=1}^T S(\text{ind})_t$:
    $$\text{pen}_{\text{sat}}(r) = \begin{cases} 3.0 \cdot (r_{\text{lo}} - r) & \text{if } r < r_{\text{lo}} \\ 3.0 \cdot (r - r_{\text{hi}}) & \text{if } r > r_{\text{hi}} \\ 0 & \text{if } r_{\text{lo}} \le r \le r_{\text{hi}} \end{cases}$$
    where $r_{\text{lo}} = 0.15$ and $r_{hi} = 0.85$.
 
@@ -153,7 +153,7 @@ I conducted the first validation benchmark by evolving $N = 1,000$ orthogonal fo
 | **Max Pairwise Similarity** | **1.0000** (exact clones) | **0.6788** | Strict compliance with $\theta \le 0.6$ |
 | **Fraction Pairs $\text{sim} > 0.9$** | 0.0065 | **0.0000** | Zero near-duplicate pairs |
 | **Nearest-Neighbor Similarity** | **0.8246** | **0.4320** | Cluster dispersion doubled |
-| **Cross-Equivalence ($B \in A$)** | - | **2.0%** | 98% completely novel logic |
+| **Cross-Equivalence ( $B \in A$)** | - | **2.0%** | 98% completely novel logic |
 
 ```
 Nearest Neighbor Similarity Distribution (lower is better dispersed):
@@ -200,7 +200,7 @@ G
             ├── p1
             └── p2
 ```
-*Semantic Interpretation:* A globally guarded property providing three disjunctive safety fallbacks, tying discrete state implications ($p_1 \to p_2$) with next-step guarantees.
+*Semantic Interpretation:* A globally guarded property providing three disjunctive safety fallbacks, tying discrete state implications ( $p_1 \to p_2$) with next-step guarantees.
 
 ---
 
@@ -215,7 +215,7 @@ However, when launching `gp_ltlf.py` at scale, the single-population algorithm h
 Through profiling and evolutionary dynamics analysis, I identified four compounding bottlenecks:
 
 #### 1. Genetic Diversity Collapse (Inbreeding & Homogenization)
-In a single population subjected to tournament selection ($k=3$) and elitism, individuals rapidly converge toward the same high-performing structural templates. Once the archive contained ~16,000 signatures, the remaining unoccupied regions of the $2^{1024}$ Boolean hypercube became narrow, disjoint corridors. Crossover between two homogenized individuals in the population almost invariably generated offspring that fell into already-occupied regions of the archive, resulting in a rejection rate of $>99.8\%$ per candidate.
+In a single population subjected to tournament selection ( $k=3$) and elitism, individuals rapidly converge toward the same high-performing structural templates. Once the archive contained ~16,000 signatures, the remaining unoccupied regions of the $2^{1024}$ Boolean hypercube became narrow, disjoint corridors. Crossover between two homogenized individuals in the population almost invariably generated offspring that fell into already-occupied regions of the archive, resulting in a rejection rate of $>99.8\%$ per candidate.
 
 #### 2. The "Multi-Objective Whitening" Problem
 The scalarized fitness function:
@@ -248,7 +248,7 @@ Total Parallel Population: 8 islands × 60 individuals = 480 active individuals 
 
 To solve the multi-objective whitening problem without fragile scalarization tuning, I introduced **Speciation by Functional Niches**. Rather than forcing all islands to optimize the same generic objective, I partitioned the 8 islands into **4 distinct semantic niches** (2 twin islands per niche):
 
-| Island IDs | Niche Name | Target Behavior | Satisfiability Range $[r_{\text{lo}}, r_{\text{hi}}]$ | Favored Operators ($\mathcal{F}_k$) | Fitness Bonus |
+| Island IDs | Niche Name | Target Behavior | Satisfiability Range $[r_{\text{lo}}, r_{\text{hi}}]$ | Favored Operators ( $\mathcal{F}_k$) | Fitness Bonus |
 | :---: | :---: | :--- | :---: | :---: | :---: |
 | **0, 1** | **Safety** | Invariants, persistent guards, stability | $[0.25, 0.85]$ | $\{\mathbf{G}, \to, \land\}$ | $+0.04$ per occurrence |
 | **2, 3** | **Liveness** | Eventualities, progress, until-chains | $[0.20, 0.80]$ | $\{\mathbf{F}, \mathbf{U}, \lor\}$ | $+0.04$ per occurrence |
@@ -308,11 +308,11 @@ flowchart TD
 
 #### How Dominance is Structurally Eliminated:
 1. **Intra-Niche Twin Exchange (Every Epoch)**:
-   Twin islands in the same niche ($0 \leftrightarrow 1$, $2 \leftrightarrow 3$, $4 \leftrightarrow 5$, $6 \leftrightarrow 7$) exchange their top $r_{\text{intra}} = 2$ elite individuals, replacing the bottom 2 worst individuals in the twin. Because both islands share the same niche fitness, this refines specialized traits without disruptive drift.
+   Twin islands in the same niche ( $0 \leftrightarrow 1$, $2 \leftrightarrow 3$, $4 \leftrightarrow 5$, $6 \leftrightarrow 7$) exchange their top $r_{\text{intra}} = 2$ elite individuals, replacing the bottom 2 worst individuals in the twin. Because both islands share the same niche fitness, this refines specialized traits without disruptive drift.
 2. **Asymmetric Inter-Niche Ring Bridges (Every 2 Epochs)**:
    To cross-pollinate building blocks (e.g., combining a Safety $\mathbf{G}$ pattern from Niche 1 with a Liveness $\mathbf{F}$ pattern from Niche 2 to create a Response pattern $\mathbf{G}(p \to \mathbf{F} q)$), individuals migrate along a directed ring:
    $$1 \longrightarrow 2 \longrightarrow 3 \longrightarrow 4 \longrightarrow 5 \longrightarrow 6 \longrightarrow 7 \longrightarrow 0$$
-   *Crucial design choice*: Only **1 immigrant** ($r_{\text{inter}} = 1$) is transferred, representing only $1.67\%$ of the recipient's population.
+   *Crucial design choice*: Only **1 immigrant** ( $r_{\text{inter}} = 1$) is transferred, representing only $1.67\%$ of the recipient's population.
 3. **Symmetry Breaking**: Notice that within each niche, Twin B acts as the bridge sender, while Twin A receives incoming immigrants. This breaks circular resonance loops and prevents reciprocal dominance.
 
 ### 5.4 High-Performance HPC Engineering
@@ -328,7 +328,7 @@ To support generation up to 50,000 formulas without resource exhaustion on Demet
 
 I executed the final comparative benchmark on the **Demetra HPC cluster** at the University of Trieste (partition `Main`, 8 dedicated CPU cores, 32 GB RAM).
 
-Both generators were tasked with producing datasets over long temporal horizons ($L \le 100$) with 4 balanced traces per formula (2 positive, 2 negative witnesses), yielding up to 200,000 examples.
+Both generators were tasked with producing datasets over long temporal horizons ( $L \le 100$) with 4 balanced traces per formula (2 positive, 2 negative witnesses), yielding up to 200,000 examples.
 
 ### 6.1 Quantitative Results Table
 
@@ -336,15 +336,15 @@ The results, extracted directly from the final evaluation report ([`report.json`
 
 | Evaluation Metric | Dataset A (Spot `randltl`) | Dataset B (GP Island Model) | Scientific Interpretation & Impact |
 | :--- | :---: | :---: | :--- |
-| **Unique Formulas ($N$)** | 33,621 / 50,000 req. | **50,000 / 50,000 req.** | Spot rejected 16.4k formulas; GP hit 100% of target. |
+| **Unique Formulas ( $N$)** | 33,621 / 50,000 req. | **50,000 / 50,000 req.** | Spot rejected 16.4k formulas; GP hit 100% of target. |
 | **Total Examples** | 134,484 | **200,000** | Exactly 4 balanced traces per formula. |
 | **Label Balance (Positive Frac.)** | 0.5000 | **0.5000** | Perfect 50/50 balance between positive/negative. |
 | **Formula Leakage Across Splits** | **0** | **0** | **Strict zero-leakage guarantee** verified across splits. |
-| **Evaluated Sample Size** | 2,000 | 2,000 | Independent held-out evaluation pool ($T=1024$). |
+| **Evaluated Sample Size** | 2,000 | 2,000 | Independent held-out evaluation pool ( $T=1024$). |
 | **Unique Semantic Signatures** | 1,421 / 2,000 (**71.05%**) | **2,000 / 2,000 (100.0%)** | **RandLTL has 28.95% duplicates; GP has ZERO redundancy.** |
 | **Mean Pairwise Similarity** | 0.0870 | **0.0377** | GP formulas are **56.7% more orthogonal** than RandLTL. |
-| **95th Percentile Similarity ($\text{p95}$)** | 0.4116 | **0.0948** | 95% of all GP pairs have $<9.5\%$ semantic overlap! |
-| **Max Pairwise Similarity ($\text{max}$)** | **1.0000** (exact clones) | **0.6248** | No pair in GP exceeds the $\theta=0.60$ threshold boundary. |
+| **95th Percentile Similarity ( $\text{p95}$)** | 0.4116 | **0.0948** | 95% of all GP pairs have $<9.5\%$ semantic overlap! |
+| **Max Pairwise Similarity ( $\text{max}$)** | **1.0000** (exact clones) | **0.6248** | No pair in GP exceeds the $\theta=0.60$ threshold boundary. |
 | **Frac. Pairs $\text{sim} > 0.9$** | 0.0067 | **0.0000** | Exactly zero near-equivalent pairs in GP. |
 | **Nearest-Neighbor Similarity** | **0.8544** | **0.2153** | **RandLTL clusters tightly (85.4%); GP is dispersed (21.5%).** |
 | **Mean Formula Size (nodes)** | 9.24 $\pm$ 3.04 | **30.38 $\pm$ 7.14** | GP evolved significantly richer compositional logic. |
@@ -381,7 +381,7 @@ Comparing Dataset B directly against Dataset A yields remarkable insights into t
 
 1. **Zero Common Formulas**: Not a single formula evolved by the Island Model was syntactically generated by Spot's `randltl` (`common_formulas = 0`).
 2. **Sub-20% Baseline Overlap**: On average, a formula from the GP Island dataset shares at most **19.70%** similarity with *any* formula in the RandLTL dataset (`B_to_A_max_sim_mean = 0.1970`).
-3. **Zero Semantic Equivalents**: Exactly **0.0%** of GP-evolved formulas find a semantic equivalent ($\text{sim} > 0.95$) in RandLTL.
+3. **Zero Semantic Equivalents**: Exactly **0.0%** of GP-evolved formulas find a semantic equivalent ( $\text{sim} > 0.95$) in RandLTL.
 4. **Conclusion**: The Island Model did not simply re-sample the same distribution; it discovered entirely novel functional sub-spaces of temporal logic that random syntax trees never reach.
 
 ---
@@ -392,7 +392,7 @@ In this work, carried out for the **Optimization for AI** Master's course and de
 
 ### Key Takeaways from an Optimization Perspective:
 1. **The Fallacy of Pure Random Sampling**: Generating formal structures via unguided grammatical sampling is deeply flawed. Due to non-linear semantic mappings, random trees collapse into tight, redundant semantic attractors (~29% duplication).
-2. **The Curse of Single-Population Scaling**: Simple archive-based GP works for toy benchmarks ($N=1,000$), but single populations inevitably suffer genetic diversity collapse when scaled to industrial budgets ($N=50,000$). Furthermore, multi-objective scalarization suffers from whitening when similarity penalties overwhelm other objectives.
+2. **The Curse of Single-Population Scaling**: Simple archive-based GP works for toy benchmarks ( $N=1,000$), but single populations inevitably suffer genetic diversity collapse when scaled to industrial budgets ( $N=50,000$). Furthermore, multi-objective scalarization suffers from whitening when similarity penalties overwhelm other objectives.
 3. **The Power of Semantic Speciation**: Partitioning the optimization search into functional niches (Safety, Liveness, Step Dynamics, Rare Triggers) allows local populations to explore extreme, specialized regions of the state space without being penalized by global trade-offs.
 4. **Structured Migration as an Innovator**: The asymmetric bipartite ring topology struck an optimal balance between local niche preservation (intra-niche twin exchange) and cross-niche innovation (inter-niche directed bridges), completely preventing island dominance while enabling the discovery of complex composite temporal properties.
 
