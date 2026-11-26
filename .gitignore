@@ -20,5 +20,9 @@ data/dataset/generation_report.json
 # File di log ed errori generati da Slurm su HPC
 slurm/*.err
 slurm/*.out
+slurm/*.slurm
+slurm/*.sh
 *.err
 *.out
+*.slurm
+*.sh
