@@ -75,14 +75,14 @@ where $n_a = \sum_t S_a[t]$ and $n_b = \sum_t S_b[t]$. Equivalently, on mean-cen
 
 | Metric | Mathematical Formulation | Optimization Objective / Purpose |
 | :--- | :--- | :--- |
-| **Unique Signatures** | $|\{S(\phi) : \phi \in \Phi_{\text{sample}}\}|$ | **Maximize**: Measures effective semantic diversity. If 2,000 formulas produce 1,421 signatures, ~29% are redundant duplicates. |
-| **Pairwise Similarity** | $\text{sim}(\phi_a, \phi_b) = |\phi(S(\phi_a), S(\phi_b))|$ | **Minimize**: Semantic dependence between pairs. We track $\text{mean}$, 95th percentile ($\text{p95}$), and maximum ($\text{max}$). |
+| **Unique Signatures** | $\{S(\phi) : \phi \in \Phi_{\text{sample}}\}$ | **Maximize**: Measures effective semantic diversity. If 2,000 formulas produce 1,421 signatures, ~29% are redundant duplicates. |
+| **Pairwise Similarity** | $\text{sim}(\phi_a, \phi_b) = \phi(S(\phi_a), S(\phi_b))$ | **Minimize**: Semantic dependence between pairs. We track $\text{mean}$, 95th percentile ( $\text{p95}$), and maximum ( $\text{max}$). |
 | **Frac. Pairs $\text{sim} > 0.9$** | $\frac{1}{\binom{M}{2}} \sum_{a < b} \mathbb{I}(\text{sim}(\phi_a, \phi_b) > 0.9)$ | **Minimize (Target: 0.0)**: Fraction of near-identical or negated pairs in the dataset. |
 | **Nearest-Neighbor Sim.** | $\text{nn\_sim}(\phi) = \max_{\psi \in \Phi \setminus \{\phi\}} \text{sim}(\phi, \psi)$ | **Minimize**: Quantifies clustering. High average NN similarity means formulas form tight, redundant clusters in semantic space. |
 | **Satisfaction Balance** | $\mu_{\text{sat}} = \mathbb{E}[\text{mean}(S(\phi))], \quad \sigma_{\text{sat}}$ | **Target $\mu \approx 0.50$, moderate $\sigma$**: Ensures formulas are balanced and non-trivial (neither tautologies $\mu=1$ nor contradictions $\mu=0$). |
-| **Cross Equivalence** | $\frac{1}{|\Phi_B|} \sum_{\phi \in \Phi_B} \mathbb{I}(\max_{\psi \in \Phi_A} \text{sim}(\phi, \psi) > 0.95)$ | **Minimize**: Fraction of evolved formulas that already existed in the baseline dataset. Measures true novelty. |
+| **Cross Equivalence** | $\frac{1}{\Phi_B} \sum_{\phi \in \Phi_B} \mathbb{I}(\max_{\psi \in \Phi_A} \text{sim}(\phi, \psi) > 0.95)$ | **Minimize**: Fraction of evolved formulas that already existed in the baseline dataset. Measures true novelty. |
 | **Operator Entropy** | $H(\mathcal{O}) = -\sum_{op} p(op) \log_2 p(op)$ | **Balance**: Ensures structural variety across temporal and propositional connectives. |
-| **Formula Leakage** | $\sum_{s_1 \ne s_2} |\Phi_{s_1} \cap \Phi_{s_2}|$ | **Strictly 0**: Verifies that no formula appears across multiple splits (zero data leakage). |
+| **Formula Leakage** | $\sum_{s_1 \ne s_2} \Phi_{s_1} \cap \Phi_{s_2}$ | **Strictly 0**: Verifies that no formula appears across multiple splits (zero data leakage). |
 
 ---
 
@@ -206,7 +206,7 @@ G
             ├── p1
             └── p2
 ```
-*Semantic Interpretation:* A globally guarded property providing three disjunctive safety fallbacks, tying discrete state implications ($p_1 \to p_2$) with next-step guarantees.
+*Semantic Interpretation:* A globally guarded property providing three disjunctive safety fallbacks, tying discrete state implications ( $p_1 \to p_2$) with next-step guarantees.
 
 ---
 
@@ -221,7 +221,7 @@ However, when launching `gp_ltlf.py` at scale, the single-population algorithm h
 Through profiling and evolutionary dynamics analysis, I identified four compounding bottlenecks:
 
 #### 1. Genetic Diversity Collapse (Inbreeding & Homogenization)
-In a single population subjected to tournament selection ($k=3$) and elitism, individuals rapidly converge toward the same high-performing structural templates. Once the archive contained ~16,000 signatures, the remaining unoccupied regions of the Boolean hypercube became narrow, disjoint corridors. Crossover between two homogenized individuals almost invariably generated offspring falling into already-occupied regions of the archive, resulting in rejection rates $>99.8\%$.
+In a single population subjected to tournament selection ( $k=3$) and elitism, individuals rapidly converge toward the same high-performing structural templates. Once the archive contained ~16,000 signatures, the remaining unoccupied regions of the Boolean hypercube became narrow, disjoint corridors. Crossover between two homogenized individuals almost invariably generated offspring falling into already-occupied regions of the archive, resulting in rejection rates $>99.8\%$.
 
 #### 2. The "Multi-Objective Whitening" Problem
 The scalarized fitness function:
@@ -244,13 +244,13 @@ To overcome the scaling wall, I redesigned the evolutionary architecture from th
 
 ### 5.1 Architecture: 8 Islands on 8 CPU Cores
 
-Instead of maintaining a single massive population, the Island Model instantiates **8 independent sub-populations (islands)**, each pinned to a dedicated CPU worker process via `concurrent.futures.ProcessPoolExecutor`. Each island maintains a lean population of $M = 60$ individuals evolving concurrently for $G = 10$ generations per epoch ($p_c = 0.7$, $p_m = 0.3$, tournament size $k=3$, local elitism of the top 3 individuals, and height limit $H_{\max} = 7$):
+Instead of maintaining a single massive population, the Island Model instantiates **8 independent sub-populations (islands)**, each pinned to a dedicated CPU worker process via `concurrent.futures.ProcessPoolExecutor`. Each island maintains a lean population of $M = 60$ individuals evolving concurrently for $G = 10$ generations per epoch ( $p_c = 0.7$, $p_m = 0.3$, tournament size $k=3$, local elitism of the top 3 individuals, and height limit $H_{\max} = 7$):
 
 ```text
 Total Parallel Population: 8 islands × 60 individuals = 480 active individuals per epoch
 ```
 
-At the end of each epoch, each island returns its top 15 unique, non-trivial candidates ($0.05 \le r \le 0.95$) to the Master coordinator, sorted by AST size to favor compact specifications.
+At the end of each epoch, each island returns its top 15 unique, non-trivial candidates ( $0.05 \le r \le 0.95$) to the Master coordinator, sorted by AST size to favor compact specifications.
 
 ### 5.2 Resolving Multi-Objective Whitening via Semantic Niches
 
@@ -272,7 +272,7 @@ By diversifying the fitness landscape across niches:
 - Liveness islands explore guarantees requiring eventual event occurrences.
 - Step Dynamics islands specialize in sequential state transitions.
 - Rare Trigger islands discover highly selective properties near the lower satisfiability boundary.
-- **The Global Master Archive** serves as the unifying front: whenever any island discovers a formula passing both the Evolution Pool and the Hold-Out Validation Pool ($\max |\phi| \le 0.60$), it is admitted regardless of which niche produced it.
+- **The Global Master Archive** serves as the unifying front: whenever any island discovers a formula passing both the Evolution Pool and the Hold-Out Validation Pool ( $\max |\phi| \le 0.60$), it is admitted regardless of which niche produced it.
 
 ### 5.3 Topology: Bipartite Migration and Dominance Prevention
 
@@ -318,11 +318,11 @@ flowchart TD
 
 #### How Dominance is Structurally Eliminated:
 1. **Intra-Niche Twin Exchange (Every Epoch)**:
-   Twin islands in the same niche ($0 \leftrightarrow 1$, $2 \leftrightarrow 3$, $4 \leftrightarrow 5$, $6 \leftrightarrow 7$) exchange their top $r_{\text{intra}} = 2$ elite individuals, replacing the bottom 2 worst individuals in the twin. Because both islands share the same niche fitness, this refines specialized traits without disruptive drift.
+   Twin islands in the same niche ( $0 \leftrightarrow 1$, $2 \leftrightarrow 3$, $4 \leftrightarrow 5$, $6 \leftrightarrow 7$) exchange their top $r_{\text{intra}} = 2$ elite individuals, replacing the bottom 2 worst individuals in the twin. Because both islands share the same niche fitness, this refines specialized traits without disruptive drift.
 2. **Asymmetric Inter-Niche Ring Bridges (Every 2 Epochs)**:
    To cross-pollinate building blocks (e.g., combining a Safety $\mathbf{G}$ pattern from Niche 1 with a Liveness $\mathbf{F}$ pattern from Niche 2 to create a Response pattern $\mathbf{G}(p \to \mathbf{F} q)$), individuals migrate along a directed ring:
    $$1 \longrightarrow 2 \longrightarrow 3 \longrightarrow 4 \longrightarrow 5 \longrightarrow 6 \longrightarrow 7 \longrightarrow 0$$
-   Only **1 immigrant** ($r_{\text{inter}} = 1$) is transferred, representing just $1.67\%$ of the recipient's population.
+   Only **1 immigrant** ( $r_{\text{inter}} = 1$) is transferred, representing just $1.67\%$ of the recipient's population.
 3. **Symmetry Breaking**: Within each niche, Twin B acts as the bridge sender, while Twin A receives incoming immigrants. This breaks circular resonance loops and prevents reciprocal dominance.
 
 ### 5.4 Dual-Pool Semantic Evaluation (1,024 + 2,048 Traces)
@@ -331,20 +331,20 @@ Scaling archive-driven GP to 50,000 orthogonal formulas introduces a subtle stat
 
 #### Pool Roles and Information Isolation
 1. **Evolution Pool (Pool A, $T_A = 1024$ traces)**:
-   Generated from the base seed (`seed=42`, trace lengths $L \in [3, 100]$) and shared read-only with all 8 islands. During local evolution, each island evaluates candidate individuals using the vectorized semantic interpreter `sem()` over Pool A to compute semantic signatures and approximates orthogonality via maximum absolute phi correlation ($|\phi|$) against the global archive, completely avoiding exponential DFA/Büchi state-space explosion.
+   Generated from the base seed (`seed=42`, trace lengths $L \in [3, 100]$) and shared read-only with all 8 islands. During local evolution, each island evaluates candidate individuals using the vectorized semantic interpreter `sem()` over Pool A to compute semantic signatures and approximates orthogonality via maximum absolute phi correlation ( $|\phi|$) against the global archive, completely avoiding exponential DFA/Büchi state-space explosion.
 2. **Hold-Out Validation Pool (Pool B, $T_B = 2048$ independent traces)**:
-   Generated from an independent seed (`seed + 99999`, $L \in [3, 100]$) and retained **exclusively inside the Master coordinator** during the harvesting phase. The 8 worker islands never observe Pool B. Any candidate formula surviving Pool A ($\max |\phi_A| \le \text{sim\_thr} = 0.60$) is admitted to the global archive if and only if it is non-constant on Pool B and also satisfies:
-   $$\max_{\psi \in \mathcal{A}_B} |\phi_B(S_B(\text{cand}), S_B(\psi))| \le \text{sim\_thr} \quad (0.60)$$
+   Generated from an independent seed (`seed + 99999`, $L \in [3, 100]$) and retained **exclusively inside the Master coordinator** during the harvesting phase. The 8 worker islands never observe Pool B. Any candidate formula surviving Pool A ( $\max |\phi_A| \le \text{sim_thr} = 0.60$) is admitted to the global archive if and only if it is non-constant on Pool B and also satisfies:
+   $$\max_{\psi \in \mathcal{A}_B} |\phi_B(S_B(\text{cand}), S_B(\psi))| \le \text{sim_thr} \quad (0.60)$$
 
 #### Error Behavior: With vs. Without the 2,048-Trace Hold-Out Check
 - **Without Pool B (Single Fixed Pool)**:
   For a single random pair of independent formulas on $T_A = 1024$ traces, the nominal standard error of the empirical phi correlation is:
   $$\text{SE}_A \approx \frac{1}{\sqrt{T_A}} = \frac{1}{\sqrt{1024}} \approx 0.03125 \quad (\approx 3.1\%)$$
-  However, across thousands of evolutionary generations, GP evaluates millions of candidate syntax trees against the *same* fixed 1,024 traces. As the archive scales toward 50,000 formulas ($> \binom{50{,}000}{2} \approx 1.25 \times 10^9$ pairwise comparisons), this repeated querying induces **GP selection bias (overfitting)**: evolution systematically discovers and exploits favorable finite-sample fluctuations in Pool A where $|\hat{\phi}_A| \le 0.60$ even though the true population correlation $|\phi_{\text{true}}| > 0.60$. This failure mode is further amplified in low-satisfaction niches (such as `Rare Triggers`, $r \in [0.10, 0.35]$), where fewer positive trace witnesses increase variance in the denominator of $|\phi|$.
+  However, across thousands of evolutionary generations, GP evaluates millions of candidate syntax trees against the *same* fixed 1,024 traces. As the archive scales toward 50,000 formulas ( $> \binom{50{,}000}{2} \approx 1.25 \times 10^9$ pairwise comparisons), this repeated querying induces **GP selection bias (overfitting)**: evolution systematically discovers and exploits favorable finite-sample fluctuations in Pool A where $|\hat{\phi}_A| \le 0.60$ even though the true population correlation $|\phi_{\text{true}}| > 0.60$. This failure mode is further amplified in low-satisfaction niches (such as `Rare Triggers`, $r \in [0.10, 0.35]$), where fewer positive trace witnesses increase variance in the denominator of $|\phi|$.
 - **With Pool B (Hold-Out Validation)**:
-  Decoupling evolutionary search (Pool A) from archive admission (Pool B) neutralizes GP selection bias. Exact logical duplicates and exact negations ($|\phi| = 1$) are already guaranteed to be rejected deterministically on any pool containing discriminating witnesses; for all non-equivalent pairs, evaluating on the unseen Pool B reverts the admission error from biased extreme-value selection back to pure, unbiased sampling variance:
+  Decoupling evolutionary search (Pool A) from archive admission (Pool B) neutralizes GP selection bias. Exact logical duplicates and exact negations ( $|\phi| = 1$) are already guaranteed to be rejected deterministically on any pool containing discriminating witnesses; for all non-equivalent pairs, evaluating on the unseen Pool B reverts the admission error from biased extreme-value selection back to pure, unbiased sampling variance:
   $$\text{SE}_B \approx \frac{1}{\sqrt{T_B}} = \frac{1}{\sqrt{2048}} \approx 0.0221 \quad (\approx 2.2\%)$$
-  In Job `132790` (1,086 epochs), Pool A rejected **31,323** island candidates, while Hold-Out Pool B caught and rejected an additional **1,328** candidates ($\approx 2.59\%$ of all candidates that passed Pool A) that had overfitted Pool A's sampling noise. Crucially, this statistical guarantee comes at **negligible computational overhead**: across the entire 6.8-hour run, Pool B was evaluated only on the **51,328** candidates that passed Pool A, rather than the tens of millions of trees evaluated inside the islands.
+  In Job `132790` (1,086 epochs), Pool A rejected **31,323** island candidates, while Hold-Out Pool B caught and rejected an additional **1,328** candidates ( $\approx 2.59\%$ of all candidates that passed Pool A) that had overfitted Pool A's sampling noise. Crucially, this statistical guarantee comes at **negligible computational overhead**: across the entire 6.8-hour run, Pool B was evaluated only on the **51,328** candidates that passed Pool A, rather than the tens of millions of trees evaluated inside the islands.
 
 ### 5.5 High-Performance HPC Engineering (`SharedMemory` + `float32` BLAS)
 
@@ -378,14 +378,14 @@ The results extracted directly from [`report.json`](file:///home/gugutca/Pycharm
 | **Total Examples** | 134,484 | **200,000** | Exactly 4 balanced traces per formula. |
 | **Label Balance (Positive Frac.)** | 0.5000 | **0.5000** | Exact 50/50 balance between positive and negative witnesses. |
 | **Formula Leakage Across Splits** | **0** | **0** | **Strict zero-leakage guarantee** verified across splits. |
-| **Evaluated Sample Size** | 2,000 | 2,000 | Independent held-out evaluation pool ($T=1024$, `seed=12345`). |
+| **Evaluated Sample Size** | 2,000 | 2,000 | Independent held-out evaluation pool ( $T=1024$, `seed=12345`). |
 | **Unique Semantic Signatures** | 1,421 / 2,000 (**71.05%**) | **2,000 / 2,000 (100.0%)** | **`randltl` has 28.95% duplicates; GP has ZERO redundancy.** |
-| **Mean Pairwise Similarity ($|\phi|$)** | 0.0870 | **0.0356** | GP formulas are **59.1% more orthogonal** than `randltl`. |
-| **95th Percentile Similarity ($\text{p95}$)** | 0.4116 | **0.0896** | 95% of all GP pairs have $<9.0\%$ $|\phi|$ correlation. |
-| **Max Pairwise Similarity ($\text{max}$)** | **1.0000** (exact clones) | **0.6393** | Consistent with $\theta=0.60$ under independent-pool SE ($\pm 3.1\%$). |
+| **Mean Pairwise Similarity ( $\phi$)** | 0.0870 | **0.0356** | GP formulas are **59.1% more orthogonal** than `randltl`. |
+| **95th Percentile Similarity ( $\text{p95}$)** | 0.4116 | **0.0896** | 95% of all GP pairs have $<9.0\%$ $|\phi|$ correlation. |
+| **Max Pairwise Similarity ( $\text{max}$)** | **1.0000** (exact clones) | **0.6393** | Consistent with $\theta=0.60$ under independent-pool SE ( $\pm 3.1\%$). |
 | **Frac. Pairs $\text{sim} > 0.9$** | 0.0067 | **0.0000** | Exactly zero near-equivalent pairs in GP. |
 | **Nearest-Neighbor Similarity** | **0.8544** | **0.1921** | **`randltl` clusters tightly (85.4%); GP is dispersed (19.2%).** |
-| **Satisfaction Balance ($\mu_{\text{sat}} \pm \sigma_{\text{sat}}$)** | 0.5564 $\pm$ 0.3158 | **0.4675 $\pm$ 0.2417** | Well-centered near 0.50 with lower dispersion than `randltl`. |
+| **Satisfaction Balance ( $\mu_{\text{sat}} \pm \sigma_{\text{sat}}$)** | 0.5564 $\pm$ 0.3158 | **0.4675 $\pm$ 0.2417** | Well-centered near 0.50 with lower dispersion than `randltl`. |
 | **Mean Formula Size (Spot AST)** | 9.24 $\pm$ 3.04 | **32.94 $\pm$ 7.74** | GP evolved significantly richer compositional logic. |
 | **Mean AST Depth** | 5.37 | **12.76** | Deep temporal dependencies successfully synthesized. |
 | **Operator Entropy (bits)** | 2.8438 | **2.5652** | Balanced temporal and propositional connective usage. |
@@ -421,7 +421,7 @@ Comparing Dataset B directly against Dataset A confirms that GP Island explores 
 
 1. **Zero Common Formulas**: Not a single formula evolved by the Island Model was syntactically generated by Spot's `randltl` (`common_formulas = 0`).
 2. **Sub-20% Baseline Overlap**: On average, a formula from the GP Island dataset shares at most **19.39%** maximum $|\phi|$ correlation with *any* formula in the `randltl` sample (`B_to_A_max_sim_mean = 0.1939`, while `A_to_B_max_sim_mean = 0.2951`).
-3. **Zero Semantic Equivalents**: Exactly **0.0%** of GP-evolved formulas find a semantic equivalent ($\text{sim} > 0.95$) in `randltl`.
+3. **Zero Semantic Equivalents**: Exactly **0.0%** of GP-evolved formulas find a semantic equivalent ( $\text{sim} > 0.95$) in `randltl`.
 4. **Conclusion**: The Island Model did not simply re-sample the same distribution; it discovered distinct, expressive sub-spaces of temporal logic that uniform random syntax trees never reach.
 
 ---
@@ -432,10 +432,10 @@ In this work, carried out for the **Optimization for AI** Master's course and de
 
 ### Key Takeaways from an Optimization Perspective:
 1. **The Fallacy of Pure Random Sampling**: Generating formal structures via unguided grammatical sampling is deeply flawed. Due to many-to-one semantic mappings, random trees collapse into tight, redundant semantic attractors (~29% duplication).
-2. **The Curse of Single-Population Scaling**: Simple archive-based GP works for small benchmarks ($N=1,000$), but single populations suffer genetic diversity collapse and objective whitening when scaled to $N=50,000$.
+2. **The Curse of Single-Population Scaling**: Simple archive-based GP works for small benchmarks ( $N=1,000$), but single populations suffer genetic diversity collapse and objective whitening when scaled to $N=50,000$.
 3. **The Power of Semantic Speciation**: Partitioning search into functional niches (Safety, Liveness, Step Dynamics, Rare Triggers) allows local populations to explore specialized regions of temporal logic without being washed out by global similarity penalties.
 4. **Structured Migration as an Innovator**: The asymmetric bipartite ring topology balances local niche preservation (intra-niche twin exchange) with cross-niche innovation (inter-niche directed bridges), preventing island dominance while synthesizing deep composite properties.
-5. **Dual-Pool Validation & Zero-Copy BLAS Scaling**: Combining a `SharedMemory` `float32` BLAS evolution pool ($T_A = 1024$) with an isolated Master-only hold-out pool ($T_B = 2048$) eliminates GP selection bias (catching 1,328 overfitted candidates at negligible cost) and keeps epoch wall-clock time around 22.7 s all the way to 50,000 formulas.
+5. **Dual-Pool Validation & Zero-Copy BLAS Scaling**: Combining a `SharedMemory` `float32` BLAS evolution pool ( $T_A = 1024$) with an isolated Master-only hold-out pool ( $T_B = 2048$) eliminates GP selection bias (catching 1,328 overfitted candidates at negligible cost) and keeps epoch wall-clock time around 22.7 s all the way to 50,000 formulas.
 
 ### Impact on LTLfBERT:
 By replacing Spot's `randltl` with the **GP Island Dataset**, we eliminate the pervasive false-negative updates that previously degraded contrastive pre-training. The network is now provided with 50,000 mutually orthogonal temporal properties spanning deep hierarchies (mean AST depth 12.76) and balanced witness traces, establishing a rigorous foundation for contrastive conformance checking representations.
